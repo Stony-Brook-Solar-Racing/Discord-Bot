@@ -1,0 +1,16 @@
+{
+    "stats": {
+        "level": 0,
+        "hunger": 0,
+        "equipped": {
+            "weapon": "None",
+            "tool": "None",
+            "armor": "None"
+        }
+    },
+    "inventory": {
+        "wood": 0,
+        "diamond": 0,
+        "gold":0
+    }
+}
