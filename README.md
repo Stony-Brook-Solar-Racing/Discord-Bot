@@ -8,4 +8,4 @@ MineCord makes it 1D
 
 # Commands (for me)
 
-Activate Virtual Environment: myenv/Scripts/activate
+Activate Virtual Environment: myenv/Scripts/activate (type 'deactivate' to end)
