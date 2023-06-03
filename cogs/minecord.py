@@ -3,11 +3,11 @@ import discord
 from discord.ext import commands
 from discord import File
 
-from PIL import Image, ImageDraw, ImageFont
-
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+
+from image import generateInventoryImage
 
 import json
 import os
@@ -43,49 +43,13 @@ def updateStats(user_id: int, stat: str, newCount: int):
 
 def getStats(user_id: int):
     data = ref.get(user_id)
-    retrieved_stat = data[0]['405918053226774538']['stats']
+    retrieved_stat = data[0][str(user_id)]['stats']
     return retrieved_stat
 
 def getInventory(user_id: int):
     data = ref.get(user_id)
-    retrieved_stat = data[0]['405918053226774538']['inventory']
+    retrieved_stat = data[0][str(user_id)]['inventory']
     return retrieved_stat
-
-def generateInventoryImage(inv):
-    # size, background color, font
-    width, height = 450, 200
-    background_color = (255, 255, 255)
-    text_color = (255, 255, 255)
-
-    text = f"{inv['wood']}"
-
-    # Set up image
-    image = Image.new("RGB", (width, height), background_color)
-    draw = ImageDraw.Draw(image)
-
-    # Set up font
-    font = ImageFont.truetype("arial.ttf", 16)
-
-    # Draw inventory background
-    inventory_background = Image.open("images\inventory_background.png")
-    inventory_background = inventory_background.resize((width, height))
-    image.paste(inventory_background, (0,0))
-
-    # Draw wood
-    block_image = Image.open("images\wood.png").convert("RGBA")
-    block_size = (35, 35)
-    block_image = block_image.resize(block_size)
-    block_position = (62, 9)
-    image.paste(block_image, block_position, mask=block_image)
-
-    # Draw text on the image using the data
-    draw.text((82, 24), text, font=font, fill=text_color)
-
-    # Save the image to a temporary file
-    image_path = "temp_image.png"
-    image.save(image_path, format="PNG")
-
-    return image_path
 
 class Minecord(commands.Cog):
     def __init__(self, bot):
@@ -115,9 +79,36 @@ class Minecord(commands.Cog):
         await ctx.send(f'you are level {stats["level"]}\nyour hunger bar is at {stats["hunger"]}')
 
     @commands.command(aliases=[], brief="Replenishes hunger", description="N/A")
-    async def eat(self, ctx):
-        user = ctx.author
-        await ctx.send(f'you have NO FOOD')
+    async def eat(self, ctx, *, item=None):
+        user = ctx.author.id
+        stats = getStats(user)
+        hunger = stats["hunger"]
+        if (hunger == 10):
+            await ctx.send(f'🍖 You are full (10/10)')
+            return
+
+        inventory = getInventory(user)
+        food = inventory["food"]
+        if (food["total"] == 0):
+            await ctx.send(f'🍖 You have no food :(')
+            return
+        
+        if (not food.get(item)):
+            await ctx.send(f'🍖 You don\'t have that')
+            return
+        
+        if item == None:
+            print("what bitch what")
+            return
+
+        if (food[item] == 0):
+            await ctx.send(f'🍖 You don\'t have {item}')
+            return
+        else:
+            await ctx.send(f'🍖 You ate {item}')
+            updateInventory(user, f"food/{item}", food[item]-1)
+            updateInventory(user, f"food/total", food["total"]-1)
+            return
 
     @commands.command(aliases=['hold'], brief="Equip an item", description="N/A")
     async def equip(self, ctx):
