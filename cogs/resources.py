@@ -22,5 +22,9 @@ class Resources(commands.Cog):
     async def explore(self, ctx):
         await ctx.send('exploring...')
 
+    @commands.command(aliases=['er'], brief="Fishes for items in the water", description="N/A")
+    async def fish(self, ctx):
+        await ctx.send('fishing...')
+
 async def setup(client):
     await client.add_cog(Resources(client))
