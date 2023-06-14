@@ -1,0 +1,11 @@
+{
+    "gather": {
+        "1" : {
+            "low_score" : 0,
+            "high_score" : 25,
+            "num_items" : 12,
+            "item_range" : 11,
+            "item_amount" : 13
+        }
+    }
+}

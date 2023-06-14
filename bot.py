@@ -30,6 +30,6 @@ async def main():
 # on_ready() event fires when the file is run, signaling Kody's alive
 @bot.event
 async def on_ready():
-    print(f'{bot.user.name} is starting...')
+    print(f'(SUCCESS) {bot.user.name} IS NOW RUNNING...')
 
 asyncio.run(main())
