@@ -68,7 +68,7 @@ class Minecord(commands.Cog):
         else:
             await ctx.send(f'🍖 You ate {item}')
             updateInventory(user, f"food/{item}", food[item]-1)
-            updateInventory(user, f"food/total", food["total"]-1)
+            updateInventory(user, f"total", food["total"]-1)
             return
 
     @commands.command(aliases=['hold'], brief="Equip an item", description="N/A")

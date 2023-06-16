@@ -1,61 +1,85 @@
 {
-    "gather": {
-        "1":["apple", "beetroot", "carrot", "potato", "sweet_berries", "stick", "sugar_cane", "wheat"],
-        "2":["melon_slice", "wood"],
-        "3":[""]
-    },
-    "hunt": {
-        "1":["beef", "chicken", "mutton", "porkchop", "rabbit", "feather", "leather"],
-        "2":["rotten_flesh", "bone", "ender_pearl", "spider_eye", "string"],
-        "3":["blaze_powder", "blaze_rod"]
-    },
-    "mine": {
-        "1":["coal", "cobblestone"],
-        "2":["gold_ingot", "iron_ingot"],
-        "3":["ancient_debris", "diamond", "emerald", "netherite_ingot", "netherite_scrap", "obsidian"]
-    },
-    "explore": {
-        "1":[""],
-        "2":["golden_apple", "experience_bottle"],
-        "3":["totem_of_undying"]
-    },
-    "fish": {
-        "1":["cod", "salmon"],
-        "2":["book"],
-        "3":["golden_apple"]
-    },
-    "craft": {
-        "bread":["3wheat"],
-        "iron_block":["8iron"],
-        "gold_nugget":["1gold"],
-        "golden_carrot":["8gold_nugget", "1carrot"],
-        "golden_apple":["8gold_ignot", "1apple"],
-        "anvil":["3iron_block", "4iron_ignot"],
-        "beacon":[],
-        "blast_furnace":[],
-        "boat":[],
-        "brewing_stand":[],
-        "bucket":[],
-        "crafting_table":[],
-        "enchanting_table":[],
-        "furnace":[],
-        "grindstone":[],
-        "book":[],
-        "bookshelf":[],
-        "stick":[],
-        
-        "axe": [],
-        "boots": [],
-        "bow": [],
-        "chestplate": [],
-        "crossbow": [],
-        "fishing_rod": [],
-        "helmet": [],
-        "hoe": [],
-        "leggings": [],
-        "pickaxe": [],
-        "shield": [],
-        "shovel": [],
-        "sword": []
-    }
+  "gather": {
+    "1": [
+      "apple",
+      "beetroot",
+      "carrot",
+      "potato",
+      "Sweet Berries",
+      "stick",
+      "Sugar Cane",
+      "wheat"
+    ],
+    "2": ["Melon Slice", "wood"],
+    "3": [""]
+  },
+  "hunt": {
+    "1": [
+      "beef",
+      "chicken",
+      "mutton",
+      "porkchop",
+      "rabbit",
+      "feather",
+      "leather"
+    ],
+    "2": ["Rotten Flesh", "bone", "Ender Pearl", "Spider Eye", "string"],
+    "3": ["Blaze Powder", "Blaze Rod"]
+  },
+  "mine": {
+    "1": ["coal", "cobblestone"],
+    "2": ["Gold Ingot", "Iron Ingot"],
+    "3": [
+      "Ancient Debris",
+      "diamond",
+      "emerald",
+      "Netherite Ingot",
+      "Netherite Scrap",
+      "obsidian"
+    ]
+  },
+  "explore": {
+    "1": [""],
+    "2": ["Golden Apple", "Experience Bottle"],
+    "3": ["Totem of Undying"]
+  },
+  "fish": {
+    "1": ["cod", "salmon"],
+    "2": ["book"],
+    "3": ["Golden Apple"]
+  },
+  "craft": {
+    "bread": ["3wheat"],
+    "Iron Block": ["8iron"],
+    "Gold Nugget": ["1gold"],
+    "Golden Carrot": ["8Gold Nugget", "1carrot"],
+    "Golden Apple": ["8gold_ignot", "1apple"],
+    "anvil": ["3Iron Block", "4iron_ignot"],
+    "beacon": [],
+    "Blast Furnace": [],
+    "boat": [],
+    "Brewing Stand": [],
+    "bucket": [],
+    "Crafting Table": [],
+    "Enchanting Table": [],
+    "furnace": [],
+    "grindstone": [],
+    "book": [],
+    "bookshelf": [],
+    "stick": [],
+
+    "axe": [],
+    "boots": [],
+    "bow": [],
+    "chestplate": [],
+    "crossbow": [],
+    "Fishing Rod": [],
+    "helmet": [],
+    "hoe": [],
+    "leggings": [],
+    "pickaxe": [],
+    "shield": [],
+    "shovel": [],
+    "sword": []
+  }
 }

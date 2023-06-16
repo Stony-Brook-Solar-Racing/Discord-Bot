@@ -6,6 +6,49 @@
             "num_items" : 12,
             "item_range" : 11,
             "item_amount" : 13
+        },
+        "2" : {
+            "low_score" : 26,
+            "high_score" : 50,
+            "num_items" : 13,
+            "item_range" : 12,
+            "item_amount" : 24
+        }
+    },
+    "hunt": {
+        "1" : {
+            "low_score" : 0,
+            "high_score" : 25,
+            "num_items" : 12,
+            "item_range" : 11,
+            "item_amount" : 13
+        }
+    },
+    "mine": {
+        "1" : {
+            "low_score" : 0,
+            "high_score" : 25,
+            "num_items" : 12,
+            "item_range" : 11,
+            "item_amount" : 13
+        }
+    },
+    "explore": {
+        "1" : {
+            "low_score" : 0,
+            "high_score" : 25,
+            "num_items" : 12,
+            "item_range" : 11,
+            "item_amount" : 13
+        }
+    },
+    "fish": {
+        "1" : {
+            "low_score" : 0,
+            "high_score" : 25,
+            "num_items" : 12,
+            "item_range" : 11,
+            "item_amount" : 13
         }
     }
 }
