@@ -17,15 +17,16 @@ with open('config.json') as file:
 
 bot_token = config['bot_token']
 
+async def main():
+    await load()
+    await bot.start(bot_token)
+
 # Load all of our existing cogs
 async def load():
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
+            print(f'cogs.{filename[:-3]}')
             await bot.load_extension(f'cogs.{filename[:-3]}')
-
-async def main():
-    await load()
-    await bot.start(bot_token)
 
 # on_ready() event fires when the file is run, signaling Kody's alive
 @bot.event

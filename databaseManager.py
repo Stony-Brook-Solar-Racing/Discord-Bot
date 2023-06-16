@@ -7,14 +7,6 @@ import json
 with open('config.json') as file:
     config_databaseURL = json.load(file)
 
-with open('newUserData.json') as file:
-    data = json.load(file)
-
-# Access the food items and create a list
-foodsList = []
-for item, quantity in data['inventory']['food'].items():
-        foodsList.append(item)
-
 # Firebase Store
 cred = credentials.Certificate("config.json")
 firebase_admin.initialize_app(cred, {
@@ -23,6 +15,12 @@ firebase_admin.initialize_app(cred, {
 ref = db.reference('users')
 
 def isFoodItem(item: str):
+    with open('newUserData.json') as file:
+        data = json.load(file)
+    # Access the food items and create a list
+    foodsList = []
+    for item, quantity in data['inventory']['food'].items():
+            foodsList.append(item)
     if item in foodsList:
         return True
     else:
@@ -37,7 +35,7 @@ def initializeNewUserData(user_id: int):
 
 def updateInventory(user_id: int, item: str, newCount: int):
     user = ref.child(str(user_id))
-    if item in foodsList:
+    if isFoodItem(item):
         user.update({
             'inventory/food/'+item:newCount
         })
