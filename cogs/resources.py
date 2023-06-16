@@ -12,7 +12,7 @@ with open('odds.json') as file:
     item_odds = json.load(file)
 
 from databaseManager import getInventory, getStats, updateInventory
-from helperMethods import is_score_between, calculate_gather_score, spliceRangeHelper
+from helperMethods import is_score_between, calculate_gather_score, spliceRangeHelper, isFoodItem
 
 class Resources(commands.Cog):
     def __init__(self, client):
@@ -45,7 +45,14 @@ class Resources(commands.Cog):
                 random_index = random.randint(0, len(json_data) - 1)
                 random_item = json_data[random_index]
 
-                # TODO : here i can just update inventory 
+                inventory = getInventory(user)
+                curr_amt = 0
+                if ( isFoodItem(random_item) ):
+                    curr_amt = inventory["food"][random_item]
+                else:
+                    curr_amt = inventory[random_item]
+
+                updateInventory(user, random_item, curr_amt+amt)
 
                 await ctx.send(f'you found {amt} {random_item}!')
 

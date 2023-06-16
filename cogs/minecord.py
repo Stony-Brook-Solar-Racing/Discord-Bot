@@ -59,7 +59,7 @@ class Minecord(commands.Cog):
             return
         
         if item == None:
-            print("what bitch what")
+            print("what  what")
             return
 
         if (food[item] == 0):
