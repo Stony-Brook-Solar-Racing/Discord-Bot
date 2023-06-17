@@ -7,6 +7,8 @@ from discord.ext import commands
 import os
 import json
 
+from databaseManager import checkIfUserExist, initializeNewUserData
+
 # Declaring intents & declaring prefix, and creating bot
 prefix = '!'
 intents = discord.Intents.all()
@@ -20,6 +22,15 @@ bot_token = config['bot_token']
 async def main():
     await load()
     await bot.start(bot_token)
+
+@bot.before_invoke
+async def before_any_command(ctx):
+    user_id = ctx.author.id
+    exists = checkIfUserExist(user_id)
+    if exists == False:
+        await ctx.send(f"welcome to minecord {ctx.author.mention}. initializing new user data")
+        initializeNewUserData(user_id)
+        await ctx.send("initialization complete. happy mining!")
 
 # Load all of our existing cogs
 async def load():

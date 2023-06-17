@@ -35,7 +35,17 @@ def initializeNewUserData(user_id: int):
     ref.update({
         user_id: config
     })
-# initializeNewUserData(405918053226774538)
+
+def checkIfUserExist(user_id):
+    try:
+        snapshot = ref.child(str(user_id)).get()
+
+        if snapshot is not None:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print("An error occurred:", str(e))
 
 def updateInventory(user_id: int, item: str, newCount: int):
     user = ref.child(str(user_id))
@@ -56,14 +66,18 @@ def updateStats(user_id: int, stat: str, newCount: int):
 
 def getStats(user_id: int):
     data = ref.get(user_id)
-    retrieved_stat = data[0][str(user_id)]['stats']
-    return retrieved_stat
+    if data is not None:
+        return data[0][str(user_id)]['stats']
+    else:
+        print("User does not exist.")
 
 def getInventory(user_id: int):
     data = ref.get(user_id)
-    retrieved_stat = data[0][str(user_id)]['inventory']
-    return retrieved_stat
-
+    if data is not None:
+        return data[0][str(user_id)]['inventory']
+    else:
+        print("User does not exist.")
+    
 # Calculate the strength of the users items and what they can find
 def calculate_score(id, type):
     if type=="gather":

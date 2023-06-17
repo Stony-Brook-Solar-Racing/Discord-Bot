@@ -1,0 +1,3 @@
+from databaseManager import initializeNewUserData
+
+initializeNewUserData(405918053226774538)

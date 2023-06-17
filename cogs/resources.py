@@ -11,8 +11,8 @@ with open('items.json') as file:
 with open('odds.json') as file:
     item_odds = json.load(file)
 
-from databaseManager import getInventory, getStats, updateInventory, isFoodItem
-from helperMethods import is_score_between, calculate_score, spliceRangeHelper
+from databaseManager import getInventory, calculate_score, getStats, updateInventory, isFoodItem
+from helperMethods import is_score_between, spliceRangeHelper
 
 async def resource_type_handler(ctx, user: str, resourceType: str):
     gathering_items = item_manager[resourceType]
@@ -64,15 +64,28 @@ class Resources(commands.Cog):
     async def hunt(self, ctx):
         resource_type = "hunt"
         user = ctx.author.id
-        await ctx.send('hunting...')
-        await resource_type_handler(ctx, user, resource_type)
+        inv = getStats(user)
+        sword = inv['equipped']['sword']
+        axe = inv['equipped']['axe']
+        bow = inv['equipped']['bow']
+        crossbow = inv['equipped']['crossbow']
+        if (sword == "None" and axe == "None" and bow == "None" and crossbow == "None"):
+            await ctx.send('you don\'t have a weapon! (try crafting a sword, axe, bow, or crossbow first)')
+        else:
+            await ctx.send('hunting...')
+            await resource_type_handler(ctx, user, resource_type)
 
     @commands.command(aliases=['mr'], brief="Mines for resources underground", description="N/A")
     async def mine(self, ctx):
         resource_type = "mine"
         user = ctx.author.id
-        await ctx.send('mining...')
-        await resource_type_handler(ctx, user, resource_type)
+        inv = getStats(user)
+        pickaxe = inv['equipped']['pickaxe']
+        if pickaxe == "None":
+            await ctx.send('you don\'t have a pickaxe!')
+        else:
+            await ctx.send('mining...')
+            await resource_type_handler(ctx, user, resource_type)
 
     @commands.command(aliases=['er'], brief="Explores for rare items found far from home", description="N/A")
     async def explore(self, ctx):
@@ -85,8 +98,13 @@ class Resources(commands.Cog):
     async def fish(self, ctx):
         resource_type = "fish"
         user = ctx.author.id
-        await ctx.send('fishing...')
-        await resource_type_handler(ctx, user, resource_type)
+        inv = getStats(user)
+        fishing_rod = inv['equipped']['Fishing Rod']
+        if fishing_rod == "None":
+            await ctx.send('you don\'t have a fishing rod!')
+        else:
+            await ctx.send('fishing...')
+            await resource_type_handler(ctx, user, resource_type)
 
 async def setup(client):
     await client.add_cog(Resources(client))
