@@ -28,7 +28,7 @@
   },
   "mine": {
     "1": ["coal", "cobblestone"],
-    "2": ["Gold Ingot", "Iron Ingot"],
+    "2": ["Gold Ingot", "Iron Ingot", "lapis"],
     "3": [
       "Ancient Debris",
       "diamond",

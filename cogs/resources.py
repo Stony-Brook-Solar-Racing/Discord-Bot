@@ -12,12 +12,16 @@ with open('odds.json') as file:
     item_odds = json.load(file)
 
 from databaseManager import getInventory, calculate_score, getStats, updateInventory, isFoodItem
-from helperMethods import is_score_between, spliceRangeHelper
+from helperMethods import is_score_between, spliceRangeHelper, splitEquippables, getItemBoostData
 
 async def resource_type_handler(ctx, user: str, resourceType: str):
     gathering_items = item_manager[resourceType]
+    inv = getStats(user)
+
+    resource_boost = 1
 
     # Check within which interval the users gathering potential lies
+    # These are base numbers. The if statements below refine these numbers based on item quality & enchants
     user_gather_score = calculate_score(user, resourceType)
     if (is_score_between(user_gather_score, item_odds[resourceType]["1"]["low_score"], item_odds[resourceType]["1"]["high_score"])):
         # The number of items to give, from which range, and how many of each.
@@ -25,29 +29,58 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
         from_a, from_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_range"])
         amt_a, amt_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_amount"])
 
-        # num_items: how many unique items to give. ex. apple (1), or an apple and a carrot (2)
-        num_items = random.randint(num_a, num_b)
-        for i in range(num_items):
-            # rarity: how rare each item should be. could be an apple from rarity 1, or wood from rarity 2
-            # amt: how many of that item to give the user. 1 apple, or 2 apples?
-            rarity = random.randint(from_a, from_b)
-            amt = random.randint(amt_a, amt_b)
-            
-            json_data = gathering_items[str(rarity)]
-            random_index = random.randint(0, len(json_data) - 1)
-            random_item = json_data[random_index]
+    if resourceType == "gather":
+        equipped_axe = splitEquippables(inv['equipped']['axe'])[0]
+        equipped_hoe = splitEquippables(inv['equipped']['hoe'])[0]
+        
+        # boost on discord metrics discussed
+        # repeat x2 BUT axe > hoe by factor of 2
 
-            inventory = getInventory(user)
-            curr_amt = 0
-            if ( isFoodItem(random_item) ):
-                curr_amt = inventory["food"][random_item]
-            else:
-                curr_amt = inventory[random_item]
+    if resourceType == "hunt":
+        # check sword, axe, bow, and crossbow & apply boost
+        equipped_sword = splitEquippables(inv['equipped']['sword'])[0]
+        equipped_axe = splitEquippables(inv['equipped']['axe'])[0]
+        equipped_bow = splitEquippables(inv['equipped']['bow'])[0]
+        equipped_crossbow = splitEquippables(inv['equipped']['crossbow'])[0]
 
-            updateInventory(user, random_item, curr_amt+amt)
-            updateInventory(user, f"total", inventory["food"]["total"]+amt)
+    if resourceType == "mine":
+        equipped_pickaxe = splitEquippables(inv['equipped']['pickaxe'])[0]
 
-            await ctx.send(f'you found {amt} {random_item}!')
+    if resourceType == "explore":
+        comp_score = 0
+        num_boost = 1
+        amt_boost = 1
+        einv = inv["equipped"].values()
+        for eq in einv:
+            if eq == "None": continue
+            eq_score, eq_num, eq_amt = getItemBoostData(eq)
+
+    if resourceType == "fish":
+        equipped_rod = splitEquippables(inv['equipped']['Fishing Rod'])[0]
+
+    # num_items: how many unique items to give. ex. apple (1), or an apple and a carrot (2)
+    num_items = random.randint(num_a, num_b)
+    for i in range(num_items):
+        # rarity: how rare each item should be. could be an apple from rarity 1, or wood from rarity 2
+        # amt: how many of that item to give the user. 1 apple, or 2 apples?
+        rarity = random.randint(from_a, from_b)
+        amt = random.randint(amt_a, amt_b)
+        
+        json_data = gathering_items[str(rarity)]
+        random_index = random.randint(0, len(json_data) - 1)
+        random_item = json_data[random_index]
+
+        inventory = getInventory(user)
+        curr_amt = 0
+        if ( isFoodItem(random_item) ):
+            curr_amt = inventory["food"][random_item]
+        else:
+            curr_amt = inventory[random_item]
+
+        updateInventory(user, random_item, curr_amt+amt)
+        updateInventory(user, f"total", inventory["food"]["total"]+amt)
+
+        await ctx.send(f'you found {amt} {random_item}!')
 
 class Resources(commands.Cog):
     def __init__(self, client):

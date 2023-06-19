@@ -1,0 +1,4 @@
+{
+    "num_item_enchant" : ["eff", "lure", "sharp", "pow"],
+    "amt_item_enchant": ["for", "loot", "luck"]
+}
