@@ -12,29 +12,43 @@ with open('odds.json') as file:
     item_odds = json.load(file)
 
 from databaseManager import getInventory, calculate_score, getStats, updateInventory, isFoodItem
-from helperMethods import is_score_between, spliceRangeHelper, splitEquippables, getItemBoostData
+from helperMethods import is_score_between, parseEquippable, spliceRangeHelper, splitEquippables, getItemBoostData
 
 async def resource_type_handler(ctx, user: str, resourceType: str):
     gathering_items = item_manager[resourceType]
     inv = getStats(user)
 
-    resource_boost = 1
+    num_a, num_b = 0, 0
+    from_a, from_b = 0, 0
+    amt_a, amt_b = 0, 0
 
-    # Check within which interval the users gathering potential lies
-    # These are base numbers. The if statements below refine these numbers based on item quality & enchants
-    user_gather_score = calculate_score(user, resourceType)
-    if (is_score_between(user_gather_score, item_odds[resourceType]["1"]["low_score"], item_odds[resourceType]["1"]["high_score"])):
-        # The number of items to give, from which range, and how many of each.
+    if resourceType == "gather":
         num_a, num_b = spliceRangeHelper(item_odds[resourceType]["1"]["num_items"])
         from_a, from_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_range"])
         amt_a, amt_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_amount"])
-
-    if resourceType == "gather":
+        boost_message = ""
         equipped_axe = splitEquippables(inv['equipped']['axe'])[0]
         equipped_hoe = splitEquippables(inv['equipped']['hoe'])[0]
-        
-        # boost on discord metrics discussed
-        # repeat x2 BUT axe > hoe by factor of 2
+        if equipped_axe != "None":
+            eq_score, eq_num, eq_amt = getItemBoostData(equipped_axe)
+            eq_num = int(eq_num*100)
+            eq_amt = int(eq_amt*100)
+            # formatted_value = "{:.2f}".format(eq_num)
+            v_data = parseEquippable(equipped_axe)
+            if (eq_num > 0 or eq_amt > 0):
+                boost_message += f"your {v_data['type']} axe nets you +{eq_num}% item find chance, +{eq_amt}% resource amount chance\n"
+        if equipped_hoe != "None":
+            eq_score, eq_num, eq_amt = getItemBoostData(equipped_hoe)
+            eq_num = int(eq_num*100)
+            eq_amt = int(eq_amt*100)
+            v_data = parseEquippable(equipped_hoe)
+            if (eq_num > 0 or eq_amt > 0):
+                boost_message += f"your {v_data['type']} hoe nets you +{eq_num}% item find chance, +{eq_amt}% resource amount chance\n"
+        await ctx.send(boost_message)
+        num_a = int(num_a * (1 + eq_num/100))
+        num_b = int(num_b * (1 + eq_num/100))
+        amt_a = int(amt_a * (1 + eq_amt/100))
+        amt_b = int(amt_b * (1 + eq_amt/100))
 
     if resourceType == "hunt":
         # check sword, axe, bow, and crossbow & apply boost
@@ -45,15 +59,6 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
 
     if resourceType == "mine":
         equipped_pickaxe = splitEquippables(inv['equipped']['pickaxe'])[0]
-
-    if resourceType == "explore":
-        comp_score = 0
-        num_boost = 1
-        amt_boost = 1
-        einv = inv["equipped"].values()
-        for eq in einv:
-            if eq == "None": continue
-            eq_score, eq_num, eq_amt = getItemBoostData(eq)
 
     if resourceType == "fish":
         equipped_rod = splitEquippables(inv['equipped']['Fishing Rod'])[0]
@@ -74,11 +79,11 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
         curr_amt = 0
         if ( isFoodItem(random_item) ):
             curr_amt = inventory["food"][random_item]
+            updateInventory(user, f"total", inventory["food"]["total"]+amt)
         else:
             curr_amt = inventory[random_item]
 
         updateInventory(user, random_item, curr_amt+amt)
-        updateInventory(user, f"total", inventory["food"]["total"]+amt)
 
         await ctx.send(f'you found {amt} {random_item}!')
 
@@ -122,10 +127,46 @@ class Resources(commands.Cog):
 
     @commands.command(aliases=['er'], brief="Explores for rare items found far from home", description="N/A")
     async def explore(self, ctx):
-        resource_type = "explore"
         user = ctx.author.id
+        inv = getStats(user)
+        inventory = getInventory(user)
+        gathering_items = item_manager['explore']
         await ctx.send('exploring...')
-        await resource_type_handler(ctx, user, resource_type)
+
+        comp_score = 0
+        einv = inv["equipped"].values()
+        for eq in einv:
+            if eq == "None": continue
+            first_eq = splitEquippables(eq)[0]
+            eq_score, eq_num, eq_amt = getItemBoostData(first_eq)
+            comp_score += eq_score
+        if comp_score >= item_odds['explore']['composite_score_needed_3']:
+            random_number = random.randint(1, 100)
+            print(random_number)
+            if (random_number <= item_odds['explore']['chance_for_3_item']):
+                json_data = gathering_items["3"]
+                random_index = random.randint(0, len(json_data) - 1)
+                random_item = json_data[random_index]
+                amt = 1
+                await ctx.send(f'you found {amt} {random_item}')
+                updateInventory(user, random_item, inventory[random_item]+amt)
+                return
+        elif comp_score >= item_odds['explore']['composite_score_needed_2']:
+            random_number = random.randint(1, 100)
+            if (random_number <= item_odds['explore']['chance_for_2_item']):
+                json_data = gathering_items["2"]
+                random_index = random.randint(0, len(json_data) - 1)
+                random_item = json_data[random_index]
+                amt = random.randint(1, 3)
+                await ctx.send(f'you found {amt} {random_item}')
+                updateInventory(user, random_item, inventory[random_item]+amt)
+                return
+        else:
+            await ctx.send('you don\'t make it very far...')
+            # userdm = await self.client.fetch_user(user)
+            # await userdm.send("looks like you didn\'t make it very far exploring. you should work on getting some stronger gear & enchants before setting off on another journey.")
+
+        if comp_score >= item_odds['explore']['composite_score_needed_2']: await ctx.send('no luck.')
 
     @commands.command(aliases=['fr'], brief="Fishes for items in the water", description="N/A")
     async def fish(self, ctx):

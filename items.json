@@ -8,10 +8,10 @@
       "Sweet Berries",
       "stick",
       "Sugar Cane",
-      "wheat"
-    ],
-    "2": ["Melon Slice", "wood"],
-    "3": [""]
+      "wheat",
+      "Melon Slice",
+      "wood"
+    ]
   },
   "hunt": {
     "1": [
@@ -40,46 +40,12 @@
   },
   "explore": {
     "1": [""],
-    "2": ["Golden Apple", "Experience Bottle"],
+    "2": ["Experience Bottle"],
     "3": ["Totem of Undying"]
   },
   "fish": {
     "1": ["cod", "salmon"],
     "2": ["book"],
     "3": ["Golden Apple"]
-  },
-  "craft": {
-    "bread": ["3wheat"],
-    "Iron Block": ["8iron"],
-    "Gold Nugget": ["1gold"],
-    "Golden Carrot": ["8Gold Nugget", "1carrot"],
-    "Golden Apple": ["8gold_ignot", "1apple"],
-    "anvil": ["3Iron Block", "4iron_ignot"],
-    "beacon": [],
-    "Blast Furnace": [],
-    "boat": [],
-    "Brewing Stand": [],
-    "bucket": [],
-    "Crafting Table": [],
-    "Enchanting Table": [],
-    "furnace": [],
-    "grindstone": [],
-    "book": [],
-    "bookshelf": [],
-    "stick": [],
-
-    "axe": [],
-    "boots": [],
-    "bow": [],
-    "chestplate": [],
-    "crossbow": [],
-    "Fishing Rod": [],
-    "helmet": [],
-    "hoe": [],
-    "leggings": [],
-    "pickaxe": [],
-    "shield": [],
-    "shovel": [],
-    "sword": []
   }
 }

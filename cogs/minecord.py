@@ -5,6 +5,7 @@ from discord import File
 
 import json
 import os
+from helperMethods import parseEquippable
 
 from image import generateInventoryImage
 from databaseManager import getInventory, getStats, updateInventory
@@ -75,6 +76,19 @@ class Minecord(commands.Cog):
     async def equip(self, ctx):
         user = ctx.author
         await ctx.send(f'you have NOTHING')
+
+    @commands.command(aliases=['i'], brief="Check what you own", description="N/A")
+    async def items(self, ctx):
+        user = ctx.author.id
+        items_message = ""
+        inv = getStats(user)
+        equipped = inv['equipped']
+        for key, value in equipped.items():
+            if value=="None": continue
+            for v in value.split(" "):
+                v_data = parseEquippable(v)
+                items_message += f'{v_data["type"]} {key} w/ {v_data["enchants"]}\n'
+        await ctx.send(items_message)
 
 async def setup(bot):
     await bot.add_cog(Minecord(bot))

@@ -1,3 +1,9 @@
+import json
+import re
+
+with open('enchant_data.json') as file:
+    enchant_data = json.load(file)
+
 # Simple helper method
 def is_score_between(score, a, b):
     return (score >= a) and (score <= b)
@@ -13,11 +19,11 @@ def parseEquippable(item):
     item = str(item)
     parts = item.split("_")
     durability = parts[0]
-    type = parts[1]
+    item_type = parts[1]
     enchants = parts[2:]
     data = {
         "durability": durability,
-        "type": type,
+        "type": item_type,
         "enchants": enchants
     }
     return data
@@ -26,21 +32,26 @@ def parseEquippable(item):
 # Return a num_boost multiplier
 # Return a amt_boost multiplier
 def getItemBoostData(item):
-    # parse eq ^
-    # get the data
-    # the enchants
-    # separate into enchant:value
-    # if enchant exist in json for num, or amt, add +0.03*value to num_boost and amt_boost
-    # regardless, composite += 5 * value ? or smth
-    # multiply by the type (wood = 1, iron = 2?, gold=2, diamond=4, netherite=6.)
+    composite, num_boost, amt_boost = 0, 0, 0
+    item_data = parseEquippable(item)
+    item_type = item_data['type']
+    type_multiplier = enchant_data['type_multiplier'][item_type]
+    item_enchants = item_data['enchants']
+    
+    for enchant in item_enchants:
+        numbers = re.findall(r'\d+', enchant)
+        enchant_text = re.sub(r'\d+', '', enchant)
+        enchant_value = int(numbers[0])
 
-    #examples 
-    # 87_wood_eff3_unb4
-    # num_boost = 0.09
-    # amt_bosot = 0
-    # composite = 35
-    # 348_diamond_prot4
-    # num_boost = 0
-    # amt_boost = 0
-    # compopsoite = 80
-    pass
+        composite += enchant_data['enchant_add_composite_value'] * enchant_value
+
+        if enchant_text in enchant_data['num_item_enchant']:
+            num_boost += enchant_data['enchant_add_num_boost_value'] * enchant_value
+        if enchant_text in enchant_data['amt_item_enchant']:
+            amt_boost += enchant_data['enchant_add_amt_boost_value'] * enchant_value
+
+    composite *= type_multiplier
+    num_boost *= type_multiplier
+    amt_boost *= type_multiplier
+    
+    return composite, num_boost, amt_boost

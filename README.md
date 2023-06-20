@@ -26,4 +26,4 @@ Activate Virtual Environment: myenv/Scripts/activate (type 'deactivate' to end)
 
 # Ideas
 
--> When a new user tries to explore, tell them they dont make it very far, and dm them letting them know that they should work on getting some stronger gear / enchants before they can set off on more exciting journies.
+

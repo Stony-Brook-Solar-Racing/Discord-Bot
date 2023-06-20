@@ -1,4 +1,15 @@
 {
     "num_item_enchant" : ["eff", "lure", "sharp", "pow"],
-    "amt_item_enchant": ["for", "loot", "luck"]
+    "amt_item_enchant": ["for", "loot", "luck"],
+    "enchant_add_composite_value": 5,
+    "enchant_add_num_boost_value": 0.15,
+    "enchant_add_amt_boost_value": 0.35,
+    "type_multiplier" : {
+        "wood":1,
+        "stone":1.5,
+        "iron":2.5,
+        "gold":2,
+        "diamond":4,
+        "netherite":6
+    }
 }

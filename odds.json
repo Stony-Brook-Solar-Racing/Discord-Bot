@@ -3,16 +3,9 @@
         "1" : {
             "low_score" : 0,
             "high_score" : 25,
-            "num_items" : 12,
+            "num_items" : 11,
             "item_range" : 11,
             "item_amount" : 13
-        },
-        "2" : {
-            "low_score" : 26,
-            "high_score" : 50,
-            "num_items" : 13,
-            "item_range" : 12,
-            "item_amount" : 24
         }
     },
     "hunt": {
@@ -34,13 +27,10 @@
         }
     },
     "explore": {
-        "1" : {
-            "low_score" : 0,
-            "high_score" : 25,
-            "num_items" : 11,
-            "item_range" : 11,
-            "item_amount" : 11
-        }
+        "composite_score_needed_2":500,
+        "chance_for_2_item":20,
+        "composite_score_needed_3":900,
+        "chance_for_3_item":10
     },
     "fish": {
         "1" : {
