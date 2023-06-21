@@ -30,13 +30,11 @@
     "1": ["coal", "cobblestone"],
     "2": ["Gold Ingot", "Iron Ingot", "lapis"],
     "3": [
-      "Ancient Debris",
       "diamond",
       "emerald",
-      "Netherite Ingot",
-      "Netherite Scrap",
       "obsidian"
-    ]
+    ],
+    "4":["Ancient Debris"]
   },
   "explore": {
     "1": [""],

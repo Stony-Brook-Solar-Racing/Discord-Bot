@@ -77,32 +77,3 @@ def getInventory(user_id: int):
         return data[0][str(user_id)]['inventory']
     else:
         print("User does not exist.")
-    
-# Calculate the strength of the users items and what they can find
-def calculate_score(id, type):
-    if type=="gather":
-         return calculateGatherScore(id)
-    if type=="hunt":
-         return calculateHuntScore(id)
-    if type=="mine":
-         return calculateMineScore(id)
-    if type=="explore":
-         return calculateExploreScore(id)
-    if type=="fish":
-         return calculateFishScore(id)
-    return 0
-
-def calculateGatherScore(id):
-     return 0
-
-def calculateHuntScore(id):
-     return 0
-
-def calculateMineScore(id):
-     return 0
-
-def calculateExploreScore(id):
-     return 0
-
-def calculateFishScore(id):
-     return 0

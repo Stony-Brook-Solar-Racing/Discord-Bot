@@ -11,8 +11,8 @@ with open('items.json') as file:
 with open('odds.json') as file:
     item_odds = json.load(file)
 
-from databaseManager import getInventory, calculate_score, getStats, updateInventory, isFoodItem
-from helperMethods import is_score_between, parseEquippable, spliceRangeHelper, splitEquippables, getItemBoostData
+from databaseManager import getInventory, getStats, updateInventory, isFoodItem
+from helperMethods import parseEquippable, spliceRangeHelper, splitEquippables, getItemBoostData
 
 async def resource_type_handler(ctx, user: str, resourceType: str):
     gathering_items = item_manager[resourceType]
@@ -22,48 +22,141 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
     from_a, from_b = 0, 0
     amt_a, amt_b = 0, 0
 
+    num_a, num_b = spliceRangeHelper(item_odds[resourceType]["1"]["num_items"])
+    from_a, from_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_range"])
+    amt_a, amt_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_amount"])
+
     if resourceType == "gather":
-        num_a, num_b = spliceRangeHelper(item_odds[resourceType]["1"]["num_items"])
-        from_a, from_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_range"])
-        amt_a, amt_b = spliceRangeHelper(item_odds[resourceType]["1"]["item_amount"])
-        boost_message = ""
+        factor = 50
+        boost_message = "gathering...\n"
         equipped_axe = splitEquippables(inv['equipped']['axe'])[0]
         equipped_hoe = splitEquippables(inv['equipped']['hoe'])[0]
+
+        final_eq_num = 0
+        final_eq_amt = 0
+
         if equipped_axe != "None":
             eq_score, eq_num, eq_amt = getItemBoostData(equipped_axe)
-            eq_num = int(eq_num*100)
-            eq_amt = int(eq_amt*100)
+            final_eq_num += int(eq_num*factor) # Nerfed because two items contribute
+            final_eq_amt += int(eq_amt*factor)
             # formatted_value = "{:.2f}".format(eq_num)
             v_data = parseEquippable(equipped_axe)
             if (eq_num > 0 or eq_amt > 0):
-                boost_message += f"your {v_data['type']} axe nets you +{eq_num}% item find chance, +{eq_amt}% resource amount chance\n"
+                boost_message += f"your {v_data['type']} axe nets you +{final_eq_num}% item find chance, +{final_eq_amt}% resource amount chance\n"
         if equipped_hoe != "None":
             eq_score, eq_num, eq_amt = getItemBoostData(equipped_hoe)
-            eq_num = int(eq_num*100)
-            eq_amt = int(eq_amt*100)
+            final_eq_num += int(eq_num*factor)
+            final_eq_amt += int(eq_amt*factor)
             v_data = parseEquippable(equipped_hoe)
             if (eq_num > 0 or eq_amt > 0):
-                boost_message += f"your {v_data['type']} hoe nets you +{eq_num}% item find chance, +{eq_amt}% resource amount chance\n"
-        await ctx.send(boost_message)
-        num_a = int(num_a * (1 + eq_num/100))
-        num_b = int(num_b * (1 + eq_num/100))
-        amt_a = int(amt_a * (1 + eq_amt/100))
-        amt_b = int(amt_b * (1 + eq_amt/100))
+                boost_message += f"your {v_data['type']} hoe nets you +{final_eq_num}% item find chance, +{final_eq_amt}% resource amount chance\n"
+                await ctx.send(boost_message)
+        num_a = int(num_a * (1 + final_eq_num/factor))
+        num_b = int(num_b * (1 + final_eq_num/factor))
+        amt_a = int(amt_a * (1 + final_eq_amt/factor))
+        amt_b = int(amt_b * (1 + final_eq_amt/factor))
 
     if resourceType == "hunt":
+        factor = 25
+        boost_message = "hunting...\n"
         # check sword, axe, bow, and crossbow & apply boost
         equipped_sword = splitEquippables(inv['equipped']['sword'])[0]
         equipped_axe = splitEquippables(inv['equipped']['axe'])[0]
         equipped_bow = splitEquippables(inv['equipped']['bow'])[0]
         equipped_crossbow = splitEquippables(inv['equipped']['crossbow'])[0]
 
-    if resourceType == "mine":
-        equipped_pickaxe = splitEquippables(inv['equipped']['pickaxe'])[0]
+        final_eq_num = 0
+        final_eq_amt = 0
 
+        if equipped_axe != "None":
+            eq_score, eq_num, eq_amt = getItemBoostData(equipped_axe)
+            final_eq_num += int(eq_num*factor) # Nerfed because 4 items contribute
+            final_eq_amt += int(eq_amt*factor)
+            # formatted_value = "{:.2f}".format(eq_num)
+            v_data = parseEquippable(equipped_axe)
+            if (eq_num > 0 or eq_amt > 0):
+                boost_message += f"your {v_data['type']} axe nets you +{final_eq_num}% item find chance, +{final_eq_amt}% resource amount chance\n"
+        if equipped_sword != "None":
+            eq_score, eq_num, eq_amt = getItemBoostData(equipped_sword)
+            final_eq_num += int(eq_num*factor)
+            final_eq_amt += int(eq_amt*factor)
+            v_data = parseEquippable(equipped_sword)
+            if (eq_num > 0 or eq_amt > 0):
+                boost_message += f"your {v_data['type']} sword nets you +{final_eq_num}% item find chance, +{final_eq_amt}% resource amount chance\n"
+                await ctx.send(boost_message)
+        if equipped_bow != "None":
+            eq_score, eq_num, eq_amt = getItemBoostData(equipped_bow)
+            final_eq_num += int(eq_num*factor)
+            final_eq_amt += int(eq_amt*factor)
+            v_data = parseEquippable(equipped_bow)
+            if (eq_num > 0 or eq_amt > 0):
+                boost_message += f"your bow nets you +{final_eq_num}% item find chance, +{final_eq_amt}% resource amount chance\n"
+                await ctx.send(boost_message)
+        if equipped_crossbow != "None":
+            eq_score, eq_num, eq_amt = getItemBoostData(equipped_crossbow)
+            final_eq_num += int(eq_num*factor)
+            final_eq_amt += int(eq_amt*factor)
+            v_data = parseEquippable(equipped_crossbow)
+            if (eq_num > 0 or eq_amt > 0):
+                boost_message += f"your crossbow nets you +{final_eq_num}% item find chance, +{final_eq_amt}% resource amount chance\n"
+                await ctx.send(boost_message)
+        num_a = int(num_a * (1 + final_eq_num/factor))
+        num_b = int(num_b * (1 + final_eq_num/factor))
+        amt_a = int(amt_a * (1 + final_eq_amt/factor))
+        amt_b = int(amt_b * (1 + final_eq_amt/factor))
+
+    if resourceType == "mine":
+        boost_message = "mining...\n"
+        equipped_pickaxe = splitEquippables(inv['equipped']['pickaxe'])[0]
+        v_data = parseEquippable(equipped_pickaxe)
+        pick_type = v_data['type']
+        if (pick_type == "stone" or pick_type == "iron" or pick_type == "gold" or pick_type == "diamond" or pick_type == "netherite"):
+            from_b = 2
+        if (pick_type == "iron" or pick_type == "gold" or pick_type == "diamond" or pick_type == "netherite"):
+            from_b = 3
+        if (pick_type == "diamond" or pick_type == "netherite"):
+            from_b = 4
+
+        eq_score, eq_num, eq_amt = getItemBoostData(equipped_pickaxe)
+        eq_num = int(eq_num*100)
+        eq_amt = int(eq_amt*100)
+        v_data = parseEquippable(equipped_pickaxe)
+        if (eq_num > 0 or eq_amt > 0):
+            boost_message += f"your {v_data['type']} pickaxe nets you +{eq_num}% item find chance, +{eq_amt}% resource amount chance\n"
+            await ctx.send(boost_message)
+        num_a = int(num_a * (1 + eq_num/100))
+        num_b = int(num_b * (1 + eq_num/100))
+        amt_a = int(amt_a * (1 + eq_amt/100))
+        amt_b = int(amt_b * (1 + eq_amt/100))
+        
     if resourceType == "fish":
+        boost_message = "fishing...\n"
         equipped_rod = splitEquippables(inv['equipped']['Fishing Rod'])[0]
+        v_data = parseEquippable(equipped_rod)
+
+        eq_score, eq_num, eq_amt = getItemBoostData(equipped_rod)
+        if (eq_score >= item_odds['fish']['composite_score_needed_3']):
+            random_number = random.randint(1, 100)
+            if (random_number <= item_odds['fish']['chance_for_3_item']):
+                from_b = 3
+        elif (eq_score >= item_odds['fish']['composite_score_needed_2']):
+            random_number = random.randint(1, 100)
+            if (random_number <= item_odds['fish']['chance_for_2_item']):
+                from_b = 2
+
+        eq_num = int(eq_num*100)
+        eq_amt = int(eq_amt*100)
+        v_data = parseEquippable(equipped_rod)
+        if (eq_num > 0 or eq_amt > 0):
+            boost_message += f"your fishing rod nets you +{eq_num}% item find chance, +{eq_amt}% resource amount chance\n"
+            await ctx.send(boost_message)
+        num_a = int(num_a * (1 + eq_num/100))
+        num_b = int(num_b * (1 + eq_num/100))
+        amt_a = int(amt_a * (1 + eq_amt/100))
+        amt_b = int(amt_b * (1 + eq_amt/100))
 
     # num_items: how many unique items to give. ex. apple (1), or an apple and a carrot (2)
+    found_message = ""
     num_items = random.randint(num_a, num_b)
     for i in range(num_items):
         # rarity: how rare each item should be. could be an apple from rarity 1, or wood from rarity 2
@@ -75,6 +168,9 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
         random_index = random.randint(0, len(json_data) - 1)
         random_item = json_data[random_index]
 
+        if (random_item == "Golden Apple"):
+            amt = 1
+
         inventory = getInventory(user)
         curr_amt = 0
         if ( isFoodItem(random_item) ):
@@ -85,7 +181,9 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
 
         updateInventory(user, random_item, curr_amt+amt)
 
-        await ctx.send(f'you found {amt} {random_item}!')
+        found_message += f'you found {amt} {random_item}!\n'
+    if (found_message):
+        await ctx.send(found_message)
 
 class Resources(commands.Cog):
     def __init__(self, client):
@@ -95,7 +193,6 @@ class Resources(commands.Cog):
     async def gather(self, ctx):
         resource_type = "gather"
         user = ctx.author.id
-        await ctx.send('gathering...')
         await resource_type_handler(ctx, user, resource_type)
 
     @commands.command(aliases=['hr'], brief="Hunts for resources from mobs/passive entities", description="N/A")
@@ -110,7 +207,6 @@ class Resources(commands.Cog):
         if (sword == "None" and axe == "None" and bow == "None" and crossbow == "None"):
             await ctx.send('you don\'t have a weapon! (try crafting a sword, axe, bow, or crossbow first)')
         else:
-            await ctx.send('hunting...')
             await resource_type_handler(ctx, user, resource_type)
 
     @commands.command(aliases=['mr'], brief="Mines for resources underground", description="N/A")
@@ -122,7 +218,6 @@ class Resources(commands.Cog):
         if pickaxe == "None":
             await ctx.send('you don\'t have a pickaxe!')
         else:
-            await ctx.send('mining...')
             await resource_type_handler(ctx, user, resource_type)
 
     @commands.command(aliases=['er'], brief="Explores for rare items found far from home", description="N/A")
@@ -142,7 +237,6 @@ class Resources(commands.Cog):
             comp_score += eq_score
         if comp_score >= item_odds['explore']['composite_score_needed_3']:
             random_number = random.randint(1, 100)
-            print(random_number)
             if (random_number <= item_odds['explore']['chance_for_3_item']):
                 json_data = gathering_items["3"]
                 random_index = random.randint(0, len(json_data) - 1)
@@ -177,7 +271,6 @@ class Resources(commands.Cog):
         if fishing_rod == "None":
             await ctx.send('you don\'t have a fishing rod!')
         else:
-            await ctx.send('fishing...')
             await resource_type_handler(ctx, user, resource_type)
 
 async def setup(client):

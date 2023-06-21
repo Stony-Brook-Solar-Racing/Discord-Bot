@@ -10,8 +10,6 @@
     },
     "hunt": {
         "1" : {
-            "low_score" : 0,
-            "high_score" : 25,
             "num_items" : 12,
             "item_range" : 11,
             "item_amount" : 13
@@ -19,8 +17,6 @@
     },
     "mine": {
         "1" : {
-            "low_score" : 0,
-            "high_score" : 25,
             "num_items" : 12,
             "item_range" : 11,
             "item_amount" : 13
@@ -33,9 +29,11 @@
         "chance_for_3_item":10
     },
     "fish": {
+        "composite_score_needed_2":20,
+        "chance_for_2_item":20,
+        "composite_score_needed_3":30,
+        "chance_for_3_item":10,
         "1" : {
-            "low_score" : 0,
-            "high_score" : 25,
             "num_items" : 12,
             "item_range" : 11,
             "item_amount" : 13
