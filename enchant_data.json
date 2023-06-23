@@ -4,6 +4,7 @@
     "enchant_add_composite_value": 5,
     "enchant_add_num_boost_value": 0.15,
     "enchant_add_amt_boost_value": 0.35,
+    "experience_giver_strength":0.08,
     "type_multiplier" : {
         "wood":1,
         "stone":1.5,
@@ -12,4 +13,5 @@
         "diamond":4,
         "netherite":6
     }
+
 }

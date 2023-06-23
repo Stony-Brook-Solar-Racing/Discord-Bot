@@ -2,9 +2,9 @@
   "stats": {
     "level": 0,
     "lifetime_level": 0,
-    "hunger": 0,
+    "hunger": 10,
     "equipped": {
-      "axe": "87_wood_eff3_unb4 32_iron_for2",
+      "axe": "None",
       "boots": "None",
       "bow": "None",
       "chestplate": "None",

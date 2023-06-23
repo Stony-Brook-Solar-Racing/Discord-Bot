@@ -12,6 +12,8 @@ Activate Virtual Environment: myenv/Scripts/activate (type 'deactivate' to end)
 
 # Order of Task (for me)
 
+-> Minecord (everything lol)
+
 -> enchanting
 
 -> Implement crafting
