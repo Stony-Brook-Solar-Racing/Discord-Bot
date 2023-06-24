@@ -42,6 +42,8 @@ async def load():
 # on_ready() event fires when the file is run, signaling Kody's alive
 @bot.event
 async def on_ready():
+    activity = discord.Game(name="Minecraft? 😳", type=3)
+    await bot.change_presence(status=discord.Status.idle, activity=activity)
     print(f'(SUCCESS) {bot.user.name} IS NOW RUNNING...')
 
 asyncio.run(main())

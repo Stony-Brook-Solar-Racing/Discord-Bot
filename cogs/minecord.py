@@ -27,15 +27,18 @@ class Minecord(commands.Cog):
     async def inventory(self, ctx):
         user = ctx.author.id
         inventory = getInventory(user)
-        inventory_image = generateInventoryImage(inventory)
-        
-        # Send the image as a file
-        with open(inventory_image, "rb") as fp:
-            file = File(fp, filename="image.png")
-            await ctx.send(file=file)
+        if False:
+            inventory_image = generateInventoryImage(inventory)
+            
+            # Send the image as a file
+            with open(inventory_image, "rb") as fp:
+                file = File(fp, filename="image.png")
+                await ctx.send(file=file)
 
-        # Delete the temporary image file
-        os.remove(inventory_image)
+            # Delete the temporary image file
+            os.remove(inventory_image)
+        else:
+            await ctx.send(inventory)
 
     """Displays user : Hunger, level"""
     @commands.command(aliases=['xp'], brief="Displays various player stats", description="N/A")
