@@ -94,7 +94,7 @@ def removeAllDurability(user_id):
     removeDurability(user_id, "bow")
     removeDurability(user_id, "chestplate")
     removeDurability(user_id, "crossbow")
-    removeDurability(user_id, "Fishing Rod")
+    removeDurability(user_id, "Rod")
     removeDurability(user_id, "helmet")
     removeDurability(user_id, "hoe")
     removeDurability(user_id, "leggings")
@@ -153,3 +153,9 @@ def removeHunger(user_id, amount):
         newHunger = 0
     updateStats(user_id, f"hunger", newHunger)
     return newHunger
+
+def grantHunger(user_id, amount):
+    newHunger = getStats(user_id)['hunger']+amount
+    if newHunger > 10:
+        newHunger = 10
+    updateStats(user_id, f"hunger", newHunger)
