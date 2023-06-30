@@ -9,7 +9,7 @@ import os
 from helperMethods import parseEquippable
 
 from image import generateInventoryImage
-from databaseManager import getInventory, getStats, grantHunger, updateInventory, updateStats
+from databaseManager import attempt_kill_user, getInventory, getStats, grantHunger, updateInventory, updateStats
 
 with open('config.json') as file:
     config_databaseURL = json.load(file)
@@ -27,18 +27,18 @@ class Minecord(commands.Cog):
     async def inventory(self, ctx):
         user = ctx.author.id
         inventory = getInventory(user)
-        if False:
-            inventory_image = generateInventoryImage(inventory)
-            
-            # Send the image as a file
-            with open(inventory_image, "rb") as fp:
-                file = File(fp, filename="image.png")
-                await ctx.send(file=file)
+        stats = getStats(user)
+        member = ctx.author
+        pfp = member.avatar.url
+        inventory_image = generateInventoryImage(inventory, stats, pfp)
+        
+        # Send the image as a file
+        with open(inventory_image, "rb") as fp:
+            file = File(fp, filename="image.png")
+            await ctx.send(file=file)
 
-            # Delete the temporary image file
-            os.remove(inventory_image)
-        else:
-            await ctx.send(inventory)
+        # Delete the temporary image file
+        os.remove(inventory_image)
 
     """Displays user : Hunger, level"""
     @commands.command(aliases=['xp'], brief="Displays various player stats", description="N/A")
@@ -137,6 +137,19 @@ class Minecord(commands.Cog):
                 items_message += "\n"
             items_message += "\n"
         await ctx.send(items_message)
+
+    @commands.command(brief="Kill your character", description="N/A")
+    async def die(self, ctx, confirm_msg="a"):
+        if confirm_msg != "CONFIRM_DEATH":
+            await ctx.send("please type \"!die CONFIRM_DEATH\" to confirm your death")
+            return
+
+        user = ctx.author.id
+        success = attempt_kill_user(user, False)
+        if not success:
+            await ctx.send("you were saved by your Totem of Undying")
+        else:
+            await ctx.send("you threw yourself into a pool of lava... ouch")
 
 async def setup(bot):
     await bot.add_cog(Minecord(bot))

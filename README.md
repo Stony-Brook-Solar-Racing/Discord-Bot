@@ -6,26 +6,20 @@ Terraria made it 2D
 
 MineCord makes it 1D
 
-# Commands (for me)
-
-Activate Virtual Environment: myenv/Scripts/activate (type 'deactivate' to end)
-
-# Order of Task (for me)
-
--> Minecord (inventory)
+# COMING UP NEXT
 
 -> Implement crafting
 
--> enchanting
+-> Implement enchanting
 
--> Make things look nicer with embeds
+-> Refactor some commands to use EMBEDS (stats, items, crafting, enchanting)
 
--> Create a beautiful inventory png 
+-> Create a tutorial command
 
--> create bosses (Ender dragon, sea guardian) DEATH == RESTART
+-> Create Bosses (Ender dragon, Sea Guardian, etc... Probability based?) 
 
--> implement an enderchest & a way to revive past data?
+-> Implement DEATH == RESTART (Save Lifetime Level) unless Totem of Undying
 
-# Ideas
+-> Implement Enderchest
 
-
+-> OPTIONAL PAID: a way to revive past data

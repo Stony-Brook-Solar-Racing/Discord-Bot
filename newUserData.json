@@ -41,14 +41,11 @@
       "Sweet Berries": 0
     },
     "placeable": {
-      "anvil": "None",
+      "anvil": 0,
       "beacon": "None",
       "Blast Furnace": "None",
-      "boat": "None",
-      "Brewing Stand": "None",
       "Crafting Table": "None",
       "Enchanting Table": "None",
-      "furnace": "None",
       "grindstone": "None",
       "bookshelf": 0
     },

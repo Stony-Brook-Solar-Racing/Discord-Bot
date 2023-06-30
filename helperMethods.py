@@ -11,6 +11,7 @@ def spliceRangeHelper(xy):
 def splitEquippables(items):
     return items.split(" ")
 
+# 69_iron_eff3_for4
 def parseEquippable(item):
     item = str(item)
     parts = item.split("_")

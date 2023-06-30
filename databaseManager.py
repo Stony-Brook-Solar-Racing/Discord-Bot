@@ -85,8 +85,22 @@ def getInventory(user_id: int):
     else:
         print("User does not exist.")
 
+def attempt_kill_user(user_id: int, override):
+    totem_amt = getInventory(user_id)['Totem of Undying']
+    if (totem_amt > 0 and (not override)):
+        updateInventory(user_id, 'Totem of Undying', totem_amt-1)
+        return False
+    lifetime_levels = getStats(user_id)['lifetime_level']
+    initializeNewUserData(user_id)
+    updateStats(user_id, 'lifetime_level', lifetime_levels)
+    return True
+
 def grantExperience(user_id: int, amount):
     updateStats(user_id, "level", getStats(user_id)["level"]+amount)
+    updateStats(user_id, "lifetime_level", getStats(user_id)["lifetime_level"]+amount)
+
+def negateExperience(user_id: int, amount):
+    updateStats(user_id, "level", getStats(user_id)["level"]-amount)
 
 def removeAllDurability(user_id):
     removeDurability(user_id, "axe")
