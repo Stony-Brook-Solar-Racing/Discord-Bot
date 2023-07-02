@@ -12,6 +12,8 @@ MineCord makes it 1D
 
 -> Implement enchanting
 
+-> STATS command for -> stats, food, items with buttons yaaaay
+
 -> Refactor some commands to use EMBEDS (stats, items, crafting, enchanting)
 
 -> Create a tutorial command

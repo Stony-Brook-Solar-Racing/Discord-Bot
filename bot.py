@@ -1,30 +1,23 @@
 # The vital discord imports
-import asyncio
-import discord
-from discord.ext import commands
+import interactions
+from interactions import Activity, ActivityType, Client, Intents, Status, listen
 
 # Misc. imports
-import os
 import json
 
+# Custom imports
 from databaseManager import checkIfUserExist, initializeNewUserData
 
-# Declaring intents & declaring prefix, and creating bot
-prefix = '!'
-intents = discord.Intents.all()
-bot = commands.Bot(command_prefix=prefix, intents=intents)
+# Bot
+bot = Client(intents=Intents.DEFAULT)
 
 with open('config.json') as file:
     config = json.load(file)
-
 bot_token = config['bot_token']
 
-async def main():
-    await load()
-    await bot.start(bot_token)
-
-@bot.before_invoke
-async def before_any_command(ctx):
+@listen()
+async def on_message_create(ctx):
+    print("ran")
     user_id = ctx.author.id
     exists = checkIfUserExist(user_id)
     if exists == False:
@@ -32,18 +25,14 @@ async def before_any_command(ctx):
         initializeNewUserData(user_id)
         await ctx.send("initialization complete. happy mining!")
 
-# Load all of our existing cogs
-async def load():
-    for filename in os.listdir('./cogs'):
-        if filename.endswith('.py'):
-            print(f'cogs.{filename[:-3]}')
-            await bot.load_extension(f'cogs.{filename[:-3]}')
+@listen()
+async def on_startup():
+    await bot.change_presence(status=Status.IDLE, activity=Activity(name="Minecraft? 😳", type=ActivityType.PLAYING))
+    print(f'(SUCCESS) {bot.app.name} IS NOW RUNNING...')
 
-# on_ready() event fires when the file is run, signaling Kody's alive
-@bot.event
-async def on_ready():
-    activity = discord.Game(name="Minecraft? 😳", type=3)
-    await bot.change_presence(status=discord.Status.idle, activity=activity)
-    print(f'(SUCCESS) {bot.user.name} IS NOW RUNNING...')
+bot.load_extension("enchanting")
+bot.load_extension("crafting")
+bot.load_extension("minecord")
+bot.load_extension("resources")
 
-asyncio.run(main())
+bot.start(bot_token)

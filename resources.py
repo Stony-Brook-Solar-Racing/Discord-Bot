@@ -1,22 +1,21 @@
 # Imports
-import discord
-from discord.ext import commands
+from interactions import Extension
+from interactions import slash_command, SlashContext
 
+# Misc. Imports
 import json
 import random
 
-with open('items.json') as file:
-    item_manager = json.load(file)
-
-with open('odds.json') as file:
-    item_odds = json.load(file)
-
-
-with open('enchant_data.json') as file:
-    enchant_data = json.load(file)
-
+# Custom Imports and Files
 from databaseManager import getHunger, getInventory, getStats, grantExperience, removeAllDurability, removeDurability, removeHunger, updateInventory, isFoodItem
 from helperMethods import parseEquippable, spliceRangeHelper, splitEquippables, getItemBoostData
+
+with open('items.json') as file:
+    item_manager = json.load(file)
+with open('odds.json') as file:
+    item_odds = json.load(file)
+with open('enchant_data.json') as file:
+    enchant_data = json.load(file)
 
 async def resource_type_handler(ctx, user: str, resourceType: str):
     if (getHunger(user) < 1):
@@ -214,12 +213,10 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
     if (found_message):
         await ctx.send(found_message)
 
-class Resources(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+class Resources(Extension):
 
-    @commands.command(aliases=['gr'], brief="Gathers resources found from nature", description="N/A")
-    async def gather(self, ctx):
+    @slash_command(name="gather", description="Gathers resources found from nature")
+    async def gather(self, ctx: SlashContext):
         resource_type = "gather"
         user = ctx.author.id
         if (getHunger(user) < 1):
@@ -228,8 +225,8 @@ class Resources(commands.Cog):
         else:
             await resource_type_handler(ctx, user, resource_type)
 
-    @commands.command(aliases=['hr'], brief="Hunts for resources from mobs/passive entities", description="N/A")
-    async def hunt(self, ctx):
+    @slash_command(name="hunt", description="Hunts for resources from hostile/passive mobs")
+    async def hunt(self, ctx: SlashContext):
         resource_type = "hunt"
         user = ctx.author.id
         if (getHunger(user) < 1):
@@ -246,8 +243,8 @@ class Resources(commands.Cog):
             else:
                 await resource_type_handler(ctx, user, resource_type)
 
-    @commands.command(aliases=['mr'], brief="Mines for resources underground", description="N/A")
-    async def mine(self, ctx):
+    @slash_command(name="mine", description="Mines for resources underground")
+    async def mine(self, ctx: SlashContext):
         resource_type = "mine"
         user = ctx.author.id
         if (getHunger(user) < 1):
@@ -261,8 +258,8 @@ class Resources(commands.Cog):
             else:
                 await resource_type_handler(ctx, user, resource_type)
 
-    @commands.command(aliases=['er'], brief="Explores for rare items found far from home", description="N/A")
-    async def explore(self, ctx):
+    @slash_command(name="explore", description="Explores for rare items found far from home")
+    async def explore(self, ctx: SlashContext):
         user = ctx.author.id
         if (getHunger(user) < 9):
             await ctx.send("you should eat more before exploring")
@@ -313,8 +310,8 @@ class Resources(commands.Cog):
 
             if comp_score >= item_odds['explore']['composite_score_needed_2']: await ctx.send('no luck.')
 
-    @commands.command(aliases=['fr'], brief="Fishes for items in the water", description="N/A")
-    async def fish(self, ctx):
+    @slash_command(name="fish", description="Fishes for items in the water")
+    async def fish(self, ctx: SlashContext):
         resource_type = "fish"
         user = ctx.author.id
         if (getHunger(user) < 1):
@@ -327,6 +324,3 @@ class Resources(commands.Cog):
                 await ctx.send('you don\'t have a fishing rod!')
             else:
                 await resource_type_handler(ctx, user, resource_type)
-
-async def setup(client):
-    await client.add_cog(Resources(client))

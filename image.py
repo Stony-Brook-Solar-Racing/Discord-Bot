@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import requests
 
-def generateInventoryImage(inv, stats, pfp):
+def generateInventoryImage(user, inv, stats, pfp):
     # Set up image with width and height
     width, height = 437, 412
     image = Image.new("RGB", (width, height), None)
@@ -21,9 +21,9 @@ def generateInventoryImage(inv, stats, pfp):
     # Display user profile picture and total levels
     response = requests.get(pfp)
     if response.status_code == 200:
-        with open("temp.jpg", "wb") as file:
+        with open(f"user_profile_{user}.jpg", "wb") as file:
             file.write(response.content)
-    profile = Image.open("temp.jpg")
+    profile = Image.open(f"user_profile_{user}.jpg")
     profile = profile.resize((100, 100))
     image.paste(profile, (118,35))
 
@@ -31,10 +31,10 @@ def generateInventoryImage(inv, stats, pfp):
     lifetime_levels_num = int(stats['lifetime_level'])
     lifetime_levels_num = "{:05d}".format(lifetime_levels_num)
 
+    file.close()
+
     draw.text((116, 140), lifetime_levels_text, font=font, fill=(0, 0, 0))
     draw.text((145, 160), lifetime_levels_num, font=font, fill=(0, 0, 0))
-
-    os.remove("temp.jpg")
 
     # Variables for displaying inventory
     block_size = (35, 35)
@@ -162,7 +162,7 @@ def generateInventoryImage(inv, stats, pfp):
 
     
     # Save the image to a temporary file  and return
-    image_path = "temp_image.png"
+    image_path = f"inventory_image_{user}.png"
     image.save(image_path, format="PNG")
 
     return image_path
