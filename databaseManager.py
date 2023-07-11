@@ -33,8 +33,25 @@ def isFoodItem(item: str):
     else:
         return False
 
+async def createUserInDatabase(ctx):
+    user_id = ctx.author.id
+    exists = checkIfUserExist(user_id)
+    if exists == False:
+        await ctx.send(f"welcome to minecord {ctx.author.mention}. initializing new user data")
+        initializeNewUserData(user_id)
+        await ctx.send("initialization complete. happy mining!")
+        return True
+    return True
+
 def initializeNewUserData(user_id: int):
     with open('newUserData.json') as file:
+        config = json.load(file)
+    ref.update({
+        user_id: config
+    })
+
+def initializePreDefinedUserData(user_id: int):
+    with open('preDefinedUserData.json') as file:
         config = json.load(file)
     ref.update({
         user_id: config
@@ -84,6 +101,75 @@ def getInventory(user_id: int):
         return data[0][str(user_id)]['inventory']
     else:
         print("User does not exist.")
+
+with open('recipes.json') as file:
+        recipes = json.load(file)
+
+def checkSimpleCraftable(user_id, item):
+    simple = recipes["simple"]
+    inv = getInventory(user_id)
+
+    amtToGive = simple[item][0]
+    recipe_items = simple[item][1:]
+    for recipe_item in recipe_items:
+        recipeAmt = int(recipe_item[0])
+        recipeItem = recipe_item[2:]
+        if isFoodItem(recipeItem):
+            if not inv["food"][recipeItem] >= recipeAmt:
+                return False
+        else:
+            if not inv[recipeItem] >= recipeAmt:
+                return False
+    for recipe_item in recipe_items:
+        recipeAmt = int(recipe_item[0])
+        recipeItem = recipe_item[2:]
+        if isFoodItem(recipeItem):
+            updateInventory(user_id, f"food/{recipeItem}", int(inv["food"][recipeItem]) - int(recipeAmt))
+        else:
+            updateInventory(user_id, f"{recipeItem}", int(inv[recipeItem]) - int(recipeAmt))
+    if isFoodItem(item):
+        updateInventory(user_id, f"food/{item}", int(inv["food"][item]) + int(amtToGive))
+    else:
+        updateInventory(user_id, f"{item}", int(inv[item]) + int(amtToGive))
+    return True
+
+def checkPlaceableCraftable(user_id, item):
+    placeable = recipes["placeable"]
+    invp = getInventory(user_id)["placeable"]
+    inv = getInventory(user_id)
+    if item == "anvil":
+        if not ((inv["Iron Ingot"] >= 4) and (inv["Iron Block"] >= 3)):
+            return "you don't have enough Iron Ingots (or) Blocks"
+        updateInventory(user_id, f"Iron Ingot", int(inv["Iron Ingot"]) - 4)
+        updateInventory(user_id, f"Iron Block", int(inv["Iron Block"]) - 3)
+        updateInventory(user_id, f"placeable/anvil", int(invp["anvil"]) + 25)
+        return "more anvil uses acquired"
+    if item == "bookshelf":
+        if not ((inv["book"] >= 3) and (inv["wood"] >= 6)):
+            return "you don't have enough wood (or) books"
+        updateInventory(user_id, f"book", int(inv["book"]) - 3)
+        updateInventory(user_id, f"wood", int(inv["wood"]) - 6)
+        updateInventory(user_id, f"placeable/bookshelf", int(invp["bookshelf"]) + 1)
+        return "you built another bookshelf"
+    if invp[item] != "None":
+        return "you already have that. it's yours forever :)"
+
+    recipe_items = placeable[item]
+    for recipe_item in recipe_items:
+        recipeAmt = int(recipe_item[0])
+        recipeItem = recipe_item[2:]
+        if not inv[recipeItem] >= recipeAmt:
+            return f"you don't have enough {recipeItem}"
+    for recipe_item in recipe_items:
+        recipeAmt = int(recipe_item[0])
+        recipeItem = recipe_item[2:]
+        updateInventory(user_id, f"{recipeItem}", int(inv[recipeItem]) - int(recipeAmt))
+    updateInventory(user_id, f"placeable/{item}", "CRAFTED")
+    return f"successfully crafted {item}"
+
+def checkEquippableCraftable(user_id, item):
+    return "the final fucking task"
+    
 
 def attempt_kill_user(user_id: int, override):
     totem_amt = getInventory(user_id)['Totem of Undying']

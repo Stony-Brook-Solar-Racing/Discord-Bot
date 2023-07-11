@@ -1,6 +1,6 @@
 # Imports
 import interactions
-from interactions import Extension, File, OptionType, SlashCommandChoice, slash_command, slash_option
+from interactions import Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option
 from interactions import slash_command, SlashContext
 
 # Misc. imports
@@ -10,7 +10,7 @@ import os
 # Custom Imports
 from helperMethods import parseEquippable
 from image import generateInventoryImage
-from databaseManager import attempt_kill_user, getInventory, getStats, grantHunger, updateInventory, updateStats
+from databaseManager import attempt_kill_user, createUserInDatabase, getInventory, getStats, grantHunger, updateInventory, updateStats
 
 with open('config.json') as file:
     config_databaseURL = json.load(file)
@@ -19,6 +19,7 @@ with open('food_hunger_data.json') as file:
 
 class Minecord(Extension):
 
+    @check(check=createUserInDatabase)
     @slash_command(name="inventory", description="Displays your current inventory")
     async def inventory(self, ctx: SlashContext):
         user = ctx.author.id
@@ -38,6 +39,7 @@ class Minecord(Extension):
             os.remove(f"inventory_image_{user}.png")
             os.remove(f"user_profile_{user}.jpg")
 
+    @check(check=createUserInDatabase)
     @slash_command(name="stats", description="Displays various player stats")
     async def stats(self, ctx: SlashContext):
         user = ctx.author.id
@@ -46,6 +48,7 @@ class Minecord(Extension):
         hunger = "{:.1f}".format(stats["hunger"])
         await ctx.send(f'you are level {level}\nyour hunger bar is at {hunger}')
 
+    @check(check=createUserInDatabase)
     @slash_command(name="eat", description="Replenishes hunger")
     @slash_option(
         name="item",
@@ -113,6 +116,7 @@ class Minecord(Extension):
             grantHunger(user, food_hunger_data[item])
             return
 
+    @check(check=createUserInDatabase)
     @slash_command(name="food", description="Check your food items")
     async def food(self, ctx: SlashContext):
         user = ctx.author.id
@@ -130,6 +134,7 @@ class Minecord(Extension):
             display = "you have no food"
         await ctx.send(display)
 
+    @check(check=createUserInDatabase)
     @slash_command(name="equip", description="Equip an item")
     @slash_option(
         name="item_type",
@@ -187,7 +192,8 @@ class Minecord(Extension):
         newItemsList = newItemsList.rstrip()
         updateStats(user, f"equipped/{item_type}", newItemsList)
         await ctx.send(f"successfully equipped {item_type} {number}")
-        
+
+    @check(check=createUserInDatabase)
     @slash_command(name="items", description="Check what you own")
     async def items(self, ctx: SlashContext):
         user = ctx.author.id
@@ -210,6 +216,7 @@ class Minecord(Extension):
             items_message = "you have no equippable items"
         await ctx.send(items_message)
 
+    @check(check=createUserInDatabase)
     @slash_command(name="die", description="Kill your character")
     @slash_option(
         name="confirmation",

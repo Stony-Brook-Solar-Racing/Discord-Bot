@@ -1,5 +1,5 @@
 # Imports
-from interactions import Extension
+from interactions import Extension, check
 from interactions import slash_command, SlashContext
 
 # Misc. Imports
@@ -7,7 +7,7 @@ import json
 import random
 
 # Custom Imports and Files
-from databaseManager import getHunger, getInventory, getStats, grantExperience, removeAllDurability, removeDurability, removeHunger, updateInventory, isFoodItem
+from databaseManager import createUserInDatabase, getHunger, getInventory, getStats, grantExperience, removeAllDurability, removeDurability, removeHunger, updateInventory, isFoodItem
 from helperMethods import parseEquippable, spliceRangeHelper, splitEquippables, getItemBoostData
 
 with open('items.json') as file:
@@ -215,6 +215,7 @@ async def resource_type_handler(ctx, user: str, resourceType: str):
 
 class Resources(Extension):
 
+    @check(check=createUserInDatabase)
     @slash_command(name="gather", description="Gathers resources found from nature")
     async def gather(self, ctx: SlashContext):
         resource_type = "gather"
@@ -225,6 +226,7 @@ class Resources(Extension):
         else:
             await resource_type_handler(ctx, user, resource_type)
 
+    @check(check=createUserInDatabase)
     @slash_command(name="hunt", description="Hunts for resources from hostile/passive mobs")
     async def hunt(self, ctx: SlashContext):
         resource_type = "hunt"
@@ -243,6 +245,7 @@ class Resources(Extension):
             else:
                 await resource_type_handler(ctx, user, resource_type)
 
+    @check(check=createUserInDatabase)
     @slash_command(name="mine", description="Mines for resources underground")
     async def mine(self, ctx: SlashContext):
         resource_type = "mine"
@@ -258,6 +261,7 @@ class Resources(Extension):
             else:
                 await resource_type_handler(ctx, user, resource_type)
 
+    @check(check=createUserInDatabase)
     @slash_command(name="explore", description="Explores for rare items found far from home")
     async def explore(self, ctx: SlashContext):
         user = ctx.author.id
@@ -310,6 +314,7 @@ class Resources(Extension):
 
             if comp_score >= item_odds['explore']['composite_score_needed_2']: await ctx.send('no luck.')
 
+    @check(check=createUserInDatabase)
     @slash_command(name="fish", description="Fishes for items in the water")
     async def fish(self, ctx: SlashContext):
         resource_type = "fish"

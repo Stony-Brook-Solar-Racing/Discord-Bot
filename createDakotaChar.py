@@ -1,3 +1,8 @@
-from databaseManager import initializeNewUserData
+from databaseManager import initializeNewUserData, initializePreDefinedUserData
 
-initializeNewUserData(405918053226774538)
+example_data = False
+
+if example_data:
+    initializePreDefinedUserData(405918053226774538)
+else:
+    initializeNewUserData(405918053226774538)
