@@ -18,27 +18,61 @@ class Crafting(Extension):
         required=True,
         opt_type=OptionType.STRING
     )
-    async def craft(self, ctx: SlashContext, *, item: str):
+    @slash_option(
+        name="material",
+        description="NOT REQUIRED! Select item type.",
+        required=False,
+        opt_type=OptionType.STRING,
+        choices=[
+            SlashCommandChoice(name="wood", value="wood"),
+            SlashCommandChoice(name="leather", value="leather"),
+            SlashCommandChoice(name="stone", value="stone"),
+            SlashCommandChoice(name="iron", value="iron"),
+            SlashCommandChoice(name="gold", value="gold"),
+            SlashCommandChoice(name="diamond", value="diamond"),
+            SlashCommandChoice(name="netherite", value="netherite"),
+            SlashCommandChoice(name="N/A", value="N/A"),
+        ]
+    )
+    async def craft(self, ctx: SlashContext, *, item: str, material: str = "N/A"):
         simple = recipes["simple"]
         placeable = recipes["placeable"]
         equippable = recipes["equippable"]
         user_id = ctx.author.id
 
+        table = getInventory(user_id)["placeable"]["Crafting Table"]
+        if (table=="None") and (item != "Crafting Table"):
+            await ctx.send("craft a crafting table first.")
+            return
+
         final_msg = f'cannot craft "{item}"'
+
+        if (item == "axe") or (item == "hoe") or (item == "pickaxe") or (item == "shovel") or (item == "sword"):
+            if (material == "leather"):
+                await ctx.send(f"{material} {item} does not exist")
+                return
+
+        if (item == "boots") or (item == "chestplate") or (item == "helmet") or (item == "leggings"):
+            if (material == "wood") or (material=="stone"):
+                await ctx.send(f"{material} {item} does not exist")
+                return
         
         if item in simple:
             canCraft = checkSimpleCraftable(user_id, item)
             if canCraft:
                 final_msg = f"crafted {item}"
 
-        elif item in placeable:
+        if item in placeable:
             final_msg = checkPlaceableCraftable(user_id, item)
-
-        elif item in equippable:
-            final_msg = checkEquippableCraftable(user_id, item)
-
-        else:
-            final_msg = "idf isadfasuifsda"
+    
+        if (item in equippable):
+            if material == "N/A":
+                if (item == "bow") or (item == "crossbow") or (item == "Fishing Rod") or (item == "shield"):
+                    final_msg = checkEquippableCraftable(user_id, item, "wood")
+                else:
+                    final_msg = "you must select a material to craft this item"
+            else:
+                final_msg = checkEquippableCraftable(user_id, item, material)
             
         await ctx.send(final_msg)
 

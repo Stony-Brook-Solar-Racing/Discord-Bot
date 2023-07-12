@@ -104,6 +104,8 @@ def getInventory(user_id: int):
 
 with open('recipes.json') as file:
         recipes = json.load(file)
+with open('enchant_data.json') as file:
+        enchant_data = json.load(file)
 
 def checkSimpleCraftable(user_id, item):
     simple = recipes["simple"]
@@ -167,8 +169,43 @@ def checkPlaceableCraftable(user_id, item):
     updateInventory(user_id, f"placeable/{item}", "CRAFTED")
     return f"successfully crafted {item}"
 
-def checkEquippableCraftable(user_id, item):
-    return "the final fucking task"
+def checkEquippableCraftable(user_id, item, material):
+    durability = enchant_data["durability"]
+    equippable = recipes["equippable"]
+    inv = getInventory(user_id)
+    raw_material = material
+    if material == "stone":
+        material = "cobblestone"
+    if material == "gold":
+        material = "Gold Ingot"
+    if material == "iron":
+        material = "Iron Ingot"
+    if material == "netherite":
+        material = "Netherite Ingot"
+
+    recipe_items = equippable[item]
+    for recipe_item in recipe_items:
+        recipeAmt = int(recipe_item[0])
+        recipeItem = recipe_item[2:]
+        if recipeItem == "GEM":
+            recipeItem = material
+        if not inv[recipeItem] >= recipeAmt:
+            return f"you don't have enough {recipeItem}"
+    for recipe_item in recipe_items:
+        recipeAmt = int(recipe_item[0])
+        recipeItem = recipe_item[2:]
+        if recipeItem == "GEM":
+            recipeItem = material
+        updateInventory(user_id, f"{recipeItem}", int(inv[recipeItem]) - int(recipeAmt))
+    craftedItem = f"{durability[raw_material]}_{raw_material}_CLEAN0"
+    alreadyEquipped = getStats(user_id)["equipped"][item]
+    if alreadyEquipped == "None":
+        alreadyEquipped = craftedItem
+    else:
+        alreadyEquipped += " "
+        alreadyEquipped += craftedItem
+    updateStats(user_id, f"equipped/{item}", alreadyEquipped)
+    return f"successfully crafted {item} (TYPE: {material})"
     
 
 def attempt_kill_user(user_id: int, override):

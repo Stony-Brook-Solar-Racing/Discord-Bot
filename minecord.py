@@ -1,6 +1,6 @@
 # Imports
 import interactions
-from interactions import Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option
+from interactions import Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option
 from interactions import slash_command, SlashContext
 
 # Misc. imports
@@ -46,7 +46,17 @@ class Minecord(Extension):
         stats = getStats(user)
         level = "{:.2f}".format(stats["level"])
         hunger = "{:.1f}".format(stats["hunger"])
-        await ctx.send(f'you are level {level}\nyour hunger bar is at {hunger}')
+
+        embed = Embed(
+            title="stats",
+            description=f"user: {ctx.author.username}",
+            color=0x008800,  # Set the color of the embed (hex format)
+        )
+
+        embed.add_field(name="level", value=f"{level}", inline=False)
+        embed.add_field(name="hunger", value=f"{hunger}/10", inline=False)
+
+        await ctx.send(embed=embed)
 
     @check(check=createUserInDatabase)
     @slash_command(name="eat", description="Replenishes hunger")
@@ -124,15 +134,21 @@ class Minecord(Extension):
         food = inventory["food"]
         foods = list(food.keys())
         items = []
+        embed = Embed(
+            title="stats",
+            description=f"user: {ctx.author.username}",
+            color=0x008800,  # Set the color of the embed (hex format)
+        )
         for foodx in foods:
             if food[foodx] != 0:
                 items.append(foodx)
         display = ""
         for item in items:
+            embed.add_field(name=f"{item}", value=f"{food[item]}", inline=False)
             display+=f'{item}: {food[item]}\n'
         if display == "":
-            display = "you have no food"
-        await ctx.send(display)
+            embed.add_field(name=f"no food.", value=" ", inline=False)
+        await ctx.send(embed=embed)
 
     @check(check=createUserInDatabase)
     @slash_command(name="equip", description="Equip an item")
@@ -200,9 +216,16 @@ class Minecord(Extension):
         items_message = ""
         inv = getStats(user)
         equipped = inv['equipped']
+
+        embed = Embed(
+            title="stats",
+            description=f"user: {ctx.author.username}",
+            color=0x008800,  # Set the color of the embed (hex format)
+        )
+
         for key, value in equipped.items():
             if value=="None": continue
-            items_message += f"**{key}**\n"
+            items_message = ""
             first_item_counter = 1
             for v in value.split(" "):
                 v_data = parseEquippable(v)
@@ -212,9 +235,11 @@ class Minecord(Extension):
                     first_item_counter+=1
                 items_message += "\n"
             items_message += "\n"
+            embed.add_field(name=f"{key}", value=f"{items_message}", inline=False)
         if items_message == "":
             items_message = "you have no equippable items"
-        await ctx.send(items_message)
+            embed.add_field(name=f"you have no equippable items", value=f" ", inline=False)
+        await ctx.send(embed=embed)
 
     @check(check=createUserInDatabase)
     @slash_command(name="die", description="Kill your character")

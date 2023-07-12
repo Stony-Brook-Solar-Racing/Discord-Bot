@@ -22,19 +22,19 @@
         "bookshelf": ["3 wood", "6 book"]
     },
     "equippable": {
-        "axe": "None",
-        "boots": "None",
-        "bow": "None",
-        "chestplate": "None",
-        "crossbow": "None",
-        "Fishing Rod": "None",
-        "helmet": "None",
-        "hoe": "None",
-        "leggings": "None",
-        "pickaxe": "None",
-        "shield": "None",
-        "shovel": "None",
-        "sword": "None"
+        "bow": ["3 string", "3 stick"],
+        "crossbow": ["4 stick", "2 Iron Ingot", "1 wood", "2 string"],
+        "Fishing Rod": ["3 stick", "2 string"],
+        "shield": ["6 wood", "1 Iron Ingot"],
+        "axe": ["2 stick", "3 GEM"],
+        "boots": ["4 GEM"],
+        "chestplate": ["8 GEM"],
+        "helmet": ["5 GEM"],
+        "hoe": ["2 stick", "2 GEM"],
+        "leggings": ["7 GEM"],
+        "pickaxe": ["2 stick", "3 GEM"],
+        "shovel": ["2 stick", "1 GEM"],
+        "sword": ["1 stick", "2 GEM"]
     },
     "smelt": {
         "Ancient Debris":"Netherite Scrap"
