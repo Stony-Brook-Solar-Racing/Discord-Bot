@@ -39,7 +39,7 @@ async def createUserInDatabase(ctx):
     if exists == False:
         await ctx.send(f"welcome to minecord {ctx.author.mention}. initializing new user data")
         initializeNewUserData(user_id)
-        await ctx.send("initialization complete. happy mining!")
+        await ctx.send("initialization complete. run /tutorial to begin. happy mining!\nPLEASE NOTE: THIS BOT IS IN BETA")
         return True
     return True
 

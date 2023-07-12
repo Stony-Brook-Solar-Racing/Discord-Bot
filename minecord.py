@@ -102,6 +102,11 @@ class Minecord(Extension):
         inventory = getInventory(user)
         food = inventory["food"]
         if (food["total"] == 0):
+            if (hunger == 0):
+                # No food and no hunger
+                await ctx.send(f"notch notices you are starving and have no food. fine. you will be spared, this once.")
+                grantHunger(user, 5)
+                return
             await ctx.send(f'🍖 You have no food :(')
             return
         

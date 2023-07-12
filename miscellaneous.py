@@ -1,5 +1,4 @@
 # Imports
-from discord import Member
 from interactions import ActionRow, Button, ButtonStyle, ComponentContext, Embed, Extension, check, component_callback
 from interactions import slash_command, SlashContext
 
