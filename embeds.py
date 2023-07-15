@@ -68,7 +68,17 @@ def getUpdateEmbeds():
 
 
 def getRecipeEmbeds():
+
+    craftable_items = f'"bread"\n"Golden Apple"\n"Golden Carrot"\n"Blaze Powder"\n"book"\n"Gold Ingot"\n"Gold Nugget"\n"Iron Ingot"\n"Iron Block"\n"Netherite Ingot"\n"stick"\n"anvil"\n"Blast Furnace"\n"Crafting Table"\n"Enchanting Table"\n"grindstone"\n"bookshelf"\n"bow"\n"crossbow"\n"Fishing Rod"\n"shield"\n"axe"\n"boots"\n"chestplate"\n"helmet"\n"hoe"\n"leggings"\n"pickaxe"\n"shovel"\n"sword"'
+
+
     embeds = [
+
+        Embed(
+            title="ALL CRAFTABLE ITEMS",
+            description=f"items must be spelled EXACTLY as shown. some items, such as armor or tools, require the second MATERIAL parameter in the slash command.\n{craftable_items}",
+            color=0x705037
+        ),
 
         Embed(
             title="recipes that adhere to the 3D game",

@@ -223,7 +223,10 @@ def grantExperience(user_id: int, amount):
     updateStats(user_id, "lifetime_level", getStats(user_id)["lifetime_level"]+amount)
 
 def negateExperience(user_id: int, amount):
-    updateStats(user_id, "level", getStats(user_id)["level"]-amount)
+    if getStats(user_id)["level"] <= amount:
+        updateStats(user_id, "level", 0)
+    else:
+        updateStats(user_id, "level", getStats(user_id)["level"]-amount)
 
 def removeAllDurability(user_id):
     removeDurability(user_id, "axe")

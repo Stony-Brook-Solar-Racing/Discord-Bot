@@ -8,8 +8,8 @@ MineCord makes it 1D
 
 # COMING UP NEXT
 
--> Implement enchanting
-
 -> Create Bosses (Ender dragon, Sea Guardian, etc... Probability based?) 
 
--> Implement Enderchest, or smth similar where you can save up to 5 items.
+-> Quality of life, less spam (mass gathering, eating, remove case sensitive, )
+
+-> Implement anviling? enchanting books?

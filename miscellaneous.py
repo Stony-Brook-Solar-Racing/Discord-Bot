@@ -7,8 +7,8 @@ from databaseManager import createUserInDatabase
 class Miscellaneous(Extension):
 
     @check(check=createUserInDatabase)
-    @slash_command(name="nada", description="nada")
-    async def nada(self, ctx: SlashContext):
-        await ctx.send("NADA")
+    @slash_command(name="enderdragon", description="fight the scary dragon")
+    async def EnderDragon(self, ctx: SlashContext):
+        await ctx.send("rawr")
 
     

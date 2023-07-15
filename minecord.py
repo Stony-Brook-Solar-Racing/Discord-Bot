@@ -102,7 +102,7 @@ class Minecord(Extension):
         inventory = getInventory(user)
         food = inventory["food"]
         if (food["total"] == 0):
-            if (hunger == 0):
+            if (hunger < 1):
                 # No food and no hunger
                 await ctx.send(f"notch notices you are starving and have no food. fine. you will be spared, this once.")
                 grantHunger(user, 5)
@@ -128,7 +128,7 @@ class Minecord(Extension):
             await ctx.send(f'🍖 You ate {item} (x{amt}) (+{amt*food_hunger_data[item]} hunger)')
             updateInventory(user, f"food/{item}", food[item]-amt)
             updateInventory(user, f"total", food["total"]-amt)
-            grantHunger(user, food_hunger_data[item])
+            grantHunger(user, food_hunger_data[item]*amt)
             return
 
     @check(check=createUserInDatabase)
@@ -167,6 +167,7 @@ class Minecord(Extension):
             SlashCommandChoice(name="axe", value="axe"),
             SlashCommandChoice(name="boots", value="boots"),
             SlashCommandChoice(name="bow", value="bow"),
+            SlashCommandChoice(name="crossbow", value="crossbow"),
             SlashCommandChoice(name="chestplate", value="chestplate"),
             SlashCommandChoice(name="Fishing Rod", value="Fishing Rod"),
             SlashCommandChoice(name="helmet", value="helmet"),
@@ -237,7 +238,7 @@ class Minecord(Extension):
                 items_message += f'({first_item_counter}) *{v_data["type"]}* {key} {v_data["enchants"]}'
                 if first_item_counter == 1:
                     items_message += " <-(EQUIPPED)"
-                    first_item_counter+=1
+                first_item_counter+=1
                 items_message += "\n"
             items_message += "\n"
             embed.add_field(name=f"{key}", value=f"{items_message}", inline=False)
