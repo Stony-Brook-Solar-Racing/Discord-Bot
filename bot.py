@@ -7,6 +7,8 @@ from embeds import getRulesEmbeds
 
 # testing branches
 
+# dasda
+
 # Bot
 bot = Client(intents=Intents.DEFAULT)
 
