@@ -24,3 +24,7 @@ def add(x, y):
 def is_admin(ctx):
     admin_role = ctx.guild.get_role(1141820845237477447)  # THIS IS THE "KEY HOLDER" ROLE
     return admin_role in ctx.author.roles
+
+def is_tester(ctx):
+    tester_role = ctx.guild.get_role(1151599685547610143) # THIS IS THE "TESTER" ROLE
+    return tester_role in ctx.author.roles

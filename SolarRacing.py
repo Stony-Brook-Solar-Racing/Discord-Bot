@@ -2,7 +2,7 @@
 import interactions
 from interactions import Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option
 from interactions import slash_command, SlashContext
-from helpers import is_admin
+import helpers
 import json
 import os
 
@@ -29,5 +29,6 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING
     )
     async def bot_say(self, ctx: SlashContext, message: str = "GO SEAWOLVES!"):
-        if not is_admin(ctx): return
+        if not helpers.is_admin(ctx): return
+        if not helpers.is_tester(ctx): return
         await ctx.channel.send(message)
