@@ -14,7 +14,7 @@ class SolarRacing(Extension):
         if not helpers.is_admin(ctx): return
         rules_array = embeds.getRulesEmbeds()
         for rule in rules_array:
-            ctx.send(rule)
+            await ctx.send(embed=rule)
     
 
     @slash_command(name="hello", description="Say hey to the Club Bot!")

@@ -44,7 +44,7 @@ def getTestEmbeds():
         Embed array with a single embed
 """
 def getRulesEmbeds():
-    color = 0x705037
+    color = 0xB2D02B
     embeds = [
 
         Embed(
