@@ -14,22 +14,23 @@ class SolarRacing(Extension):
         if not helpers.is_admin(ctx): return
         rules_array = embeds.getRulesEmbeds()
         for rule in rules_array:
+            pass
             await ctx.channel.send(embed=rule)
         
         embed = Embed(
             title="Follow Discord’s Rules",
             description="Abide by the Discord Terms of Service and Guidelines.",
-            color= 0xB2D02B
+            color= 0xF8E71C
         )
         
         components = [
             Button(
-                style = ButtonStyle.PRIMARY,
+                style = ButtonStyle.URL,
                 label = "Terms of Service",
                 url = "https://discord.com/terms"
             ),
             Button(
-                style = ButtonStyle.PRIMARY,
+                style = ButtonStyle.URL,
                 label = "Guidelines",
                 url = "https://discord.com/guidelines"
             )

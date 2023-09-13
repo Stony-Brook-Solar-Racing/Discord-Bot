@@ -44,11 +44,11 @@ def getTestEmbeds():
         Embed array with a single embed
 """
 def getRulesEmbeds():
-    color = 0xB2D02B
+    color = 0xF8E71C
     embeds = [
 
         Embed(
-            title="Respct Others",
+            title="Respect Others",
             description = "Be respectful and civil to others in conversation. Do not make comments considered mean, rude, harassing, insulting, or instigative.",
             color=color
         ),
