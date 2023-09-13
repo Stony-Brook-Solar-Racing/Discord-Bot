@@ -3,10 +3,19 @@ import interactions
 from interactions import Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option
 from interactions import slash_command, SlashContext
 import helpers
+import embeds
 import json
 import os
 
 class SolarRacing(Extension):
+
+    @slash_command(name="sendrules", description="send a full list of rules")
+    async def sendrules(self, ctx: SlashContext):
+        if not helpers.is_admin(ctx): return
+        rules_array = embeds.getRulesEmbeds()
+        for rule in rules_array:
+            ctx.send(rule)
+    
 
     @slash_command(name="hello", description="Say hey to the Club Bot!")
     async def hello(self, ctx: SlashContext):
