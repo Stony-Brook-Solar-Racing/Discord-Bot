@@ -44,12 +44,73 @@ def getTestEmbeds():
         Embed array with a single embed
 """
 def getRulesEmbeds():
+    color = 0x705037
     embeds = [
 
         Embed(
-            title="Rule 1: Don't eat the solar panels!",
-            description="They probably taste bad, and you might get sick.",
-            color=0x705037
+            title="Respct Others",
+            description = "Be respectful and civil to others in conversation. Do not make comments considered mean, rude, harassing, insulting, or instigative.",
+            color=color
+        ),
+
+        Embed(
+            title="Be Inclusive",
+            description="We will not allow discrimination or hazing in any form on this server. Be reasonable in understanding these rules.",
+            color=color
+        ),
+        
+        Embed(
+            title="Keep Profanity to a Minimum",
+            description="Swearing is a form of expressing human emotion, and we will not stop you from expressing those emotions, but please try to refrain from using it openly. Any derogatory language directed at others will not be tolerated.",
+            color=color
+        ),
+
+        Embed(
+            title="Appropriate Content Only",
+            description="Content that is considered “Not Safe For Work” including links to such NSFW content is not allowed anywhere in the server.",
+            color=color
+        ),
+
+        Embed(
+            title="Do Not Spam Messages",
+            description="Many messages sent in short succession meant to disrupt normal server usage and operation will not be tolerated.",
+            color=color
+        ),
+
+        Embed(
+            title="No Academic Dishonesty",
+            description="Do not discuss details of examinations or assignments on this server. We condone independent work, but we won’t attend your academic dishonesty trial. Follow the University Academic Integrity Policy.",
+            color=color
+        ),
+
+        Embed(
+            title="Properly Identify Yourself",
+            description="Please change your Discord nickname so that we can identify you. Offensive nicknames and profile pictures as well as falsely assuming another’s identity will not be tolerated.",
+            color=color
+        ),
+
+        Embed(
+            title="Do Not Endanger Other Members or their Property",
+            description="Sending links or files for malware, sharing private information of others without their consent, or otherwise threatening the safety of members or property will not be tolerated.",
+            color=color
+        ),
+
+        Embed(
+            title="E-Board Makes the Decisions",
+            description="The E-Board will decide appropriate actions for unruly users, and maintains the right to change the rules at any time.",
+            color=color
+        ),
+
+        Embed(
+            title="Advertise only with Permission",
+            description="Promoting events or other clubs on campus should be done only with the approval of the E-Board. Unapproved adverts in the server will be deleted.",
+            color=color
+        ),
+
+        Embed(
+            title="Follow Discord’s Rules",
+            description="Abide by the Discord Terms of Service and Guidelines.",
+            color=color
         ),
 
     ]
