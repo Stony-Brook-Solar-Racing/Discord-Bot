@@ -5,6 +5,8 @@ import json
 
 from embeds import getRulesEmbeds
 
+# testing branches
+
 # Bot
 bot = Client(intents=Intents.DEFAULT)
 
