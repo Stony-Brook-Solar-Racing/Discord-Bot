@@ -107,11 +107,6 @@ def getRulesEmbeds():
             color=color
         ),
 
-        Embed(
-            title="Follow Discord’s Rules",
-            description="Abide by the Discord Terms of Service and Guidelines.",
-            color=color
-        ),
 
     ]
 

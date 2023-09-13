@@ -1,6 +1,6 @@
 # Imports
 import interactions
-from interactions import Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option
+from interactions import Button, Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option, ButtonStyle
 from interactions import slash_command, SlashContext
 import helpers
 import embeds
@@ -14,7 +14,30 @@ class SolarRacing(Extension):
         if not helpers.is_admin(ctx): return
         rules_array = embeds.getRulesEmbeds()
         for rule in rules_array:
-            await ctx.send(embed=rule)
+            await ctx.channel.send(embed=rule)
+        
+        embed = Embed(
+            title="Follow Discord’s Rules",
+            description="Abide by the Discord Terms of Service and Guidelines.",
+            color= 0xB2D02B
+        )
+        
+        components = [
+            Button(
+                style = ButtonStyle.PRIMARY,
+                label = "Terms of Service",
+                url = "https://discord.com/terms"
+            ),
+            Button(
+                style = ButtonStyle.PRIMARY,
+                label = "Guidelines",
+                url = "https://discord.com/guidelines"
+            )
+        ]
+        
+        
+        # send the discord TOS and guidelines
+        await ctx.channel.send(embed=embed, components=components)
     
 
     @slash_command(name="hello", description="Say hey to the Club Bot!")
