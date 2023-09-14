@@ -2,6 +2,22 @@
 from interactions import Embed
 
 """
+
+this kinda has to be in bot.py? question mark?
+cus of the bot parameter i create_from_embeds?
+probably a way around it in the docs
+
+# Create an Embeds booklet which can be flipped through
+rules_embeds = getRulesEmbeds()
+rules_paginator = Paginator.create_from_embeds(bot, *rules_embeds)
+
+@slash_command(name="rules", description="Clubs have rules to follow!")
+async def rules(ctx: SlashContext):
+    await rules_paginator.send(ctx)
+
+"""
+
+"""
     This file (embeds.py) will store all embed information
     that needs to be sent out by the bot. Can return one embed,
     or an array of embeds, depending on your use case.
