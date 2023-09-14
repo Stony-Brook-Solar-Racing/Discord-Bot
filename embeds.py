@@ -3,12 +3,17 @@ from interactions import Embed
 
 """
 
-this kinda has to be in bot.py? question mark?
+the following code is an example of creating a paginator.
+requires the
+from interactions.ext.paginators import Paginator
+import, and probably a few others
+
+this following code kinda has to be in bot.py? question mark?
 cus of the bot parameter i create_from_embeds?
 probably a way around it in the docs
 
 # Create an Embeds booklet which can be flipped through
-rules_embeds = getRulesEmbeds()
+rules_embeds = embeds.getRulesEmbeds()
 rules_paginator = Paginator.create_from_embeds(bot, *rules_embeds)
 
 @slash_command(name="rules", description="Clubs have rules to follow!")
@@ -46,7 +51,7 @@ def getTestEmbeds():
 
     ]
 
-    # Images for embeds need to be set like this
+    # Images for embeds need to be set like this, obv pointing to an image.
     embeds[0].set_image(url="https://google.com")
 
     return embeds

@@ -2,13 +2,24 @@
 import interactions
 from interactions import Button, Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option, ButtonStyle
 from interactions import slash_command, SlashContext
-import helpers
-import embeds
-import json
-import os
+import helpers, embeds
+
+# This file contains the following slash commands:
+# (ADMIN) sendrules - has the bot send out embeded list of rules
+# (ADMIN) botsay - has the bot say anything
+# 
 
 class SolarRacing(Extension):
 
+    '''
+        Sends out an embeded list of rules
+
+        ARGS:
+            nada
+
+        RETURNS:
+            nada
+    '''
     @slash_command(name="sendrules", description="send a full list of rules")
     async def sendrules(self, ctx: SlashContext):
         if not helpers.is_admin(ctx): return
@@ -39,11 +50,6 @@ class SolarRacing(Extension):
         
         # send the discord TOS and guidelines
         await ctx.channel.send(embed=embed, components=components)
-    
-
-    @slash_command(name="hello", description="Say hey to the Club Bot!")
-    async def hello(self, ctx: SlashContext):
-        await ctx.send("Hey Solar Racing!")
     
     '''
         Sends a message as the bot

@@ -1,6 +1,8 @@
 # Imports
 import json
 
+# This file contains helper functions used throughout the other files.
+
 """
     Adds two numbers together.
 
@@ -17,6 +19,9 @@ def add(x, y):
 '''
     Checks to see if a user is an admin. Currently checks for the
     "Key Holder" role on Discord.
+
+    Checks to see if a user is a tester. Currently checks for the
+    "Authorized Bot Tester" role on Discord.
 
     Returns:
         bool: True if the user is an admin

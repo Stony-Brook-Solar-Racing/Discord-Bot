@@ -1,6 +1,5 @@
 # Imports
 from interactions import Activity, ActivityType, Client, Intents, SlashContext, Status, listen, slash_command
-from interactions.ext.paginators import Paginator
 import json
 
 # Bot
@@ -17,7 +16,7 @@ async def on_startup():
     print(f'(SUCCESS) {bot.app.name} IS NOW RUNNING...')
 
 # Load the extra, modularized, files.
-bot.load_extension("SolarRacing")
+bot.load_extension("SolarRacingAdmin")
 
 # Start up the bot
 bot.start(bot_token)
