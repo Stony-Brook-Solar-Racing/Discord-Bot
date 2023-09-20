@@ -14,23 +14,23 @@ class SolarRacing(Extension):
     @slash_command(name="openshop", description="send an embed to describe your shop hours")
     @slash_option(
         name="type",
-        description="what do you want to say?",
-        required=True,
+        description="what kind of hours are these?",
+        required=False,
         opt_type=OptionType.STRING
     )
     @slash_option(
         name="plan",
-        description="what do you want to say?",
-        required=True,
+        description="what is this shop centered around?",
+        required=False,
         opt_type=OptionType.STRING
     )
     @slash_option(
-        name="estimated time",
-        description="what do you want to say?",
-        required=True,
+        name="time",
+        description="how long do you plan to stay?",
+        required=False,
         opt_type=OptionType.STRING
     )
-    async def openshop(self, ctx:SlashContext):
+    async def openshop(self, ctx:SlashContext, type, plan, time):
         pass
 
     '''
