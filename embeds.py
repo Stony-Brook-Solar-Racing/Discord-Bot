@@ -1,5 +1,5 @@
 # Imports
-from interactions import Embed
+from interactions import Embed, EmbedField
 
 """
     This file (embeds.py) will store all embed information
@@ -9,6 +9,24 @@ from interactions import Embed
     Usage:
         from embeds import getTestEmbeds
 """
+
+def getShopHoursEmbed(type, plan, estimated_time):
+    embed = Embed(
+        title = f'({type}) SHOP OPEN (Session #{1})',
+        fields=[
+            EmbedField(
+                name = 'Plan',
+                value = f'{plan}',
+                inline = True
+            ),
+            EmbedField(
+                name = 'Estimated Time',
+                value = f'{estimated_time}',
+                inline = True
+            )
+        ]
+    )
+    return embed
 
 """
     The testing Embed used to demonstrate how
