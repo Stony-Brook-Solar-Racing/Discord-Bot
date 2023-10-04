@@ -31,7 +31,8 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING
     )
     async def openshop(self, ctx:SlashContext, type = "General", plan = "N/A", time = "N/A"):
-        if not helpers.is_admin(ctx): return
+        if not helpers.verify_access(ctx): return #Checks access
+
         shop_embed = embeds.getShopHoursEmbed(type, plan, time)
         await ctx.send(embed=shop_embed)
 
@@ -46,7 +47,8 @@ class SolarRacing(Extension):
     '''
     @slash_command(name="sendrules", description="send a full list of rules")
     async def sendrules(self, ctx: SlashContext):
-        if not helpers.is_admin(ctx): return
+        if not helpers.verify_access(ctx): return #Checks access
+
         rules_array = embeds.getRulesEmbeds()
         for rule in rules_array:
             pass
@@ -92,5 +94,6 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING
     )
     async def bot_say(self, ctx: SlashContext, message: str = "GO SEAWOLVES!"):
-        if not helpers.verify_access(ctx): return
+        if not helpers.verify_access(ctx): return #Checks access
+
         await ctx.channel.send(message)
