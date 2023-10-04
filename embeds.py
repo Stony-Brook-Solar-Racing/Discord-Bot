@@ -33,10 +33,16 @@ async def rules(ctx: SlashContext):
 
 def getShopHoursEmbed(type, plan, estimated_time):
     embed = Embed(
-        title = f'({type}) SHOP OPEN (Session #{1})',
+        color = 0x00FFFF,
+        title = f'SHOP OPEN (Session #{1})',
         fields=[
             EmbedField(
-                name = 'Plan',
+                name = 'Shop Type',
+                value = f'{type}',
+                inline = True
+            ),
+            EmbedField(
+                name = 'Rough Plan',
                 value = f'{plan}',
                 inline = True
             ),

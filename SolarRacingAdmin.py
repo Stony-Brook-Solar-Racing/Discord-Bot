@@ -30,8 +30,10 @@ class SolarRacing(Extension):
         required=False,
         opt_type=OptionType.STRING
     )
-    async def openshop(self, ctx:SlashContext, type, plan, time):
-        pass
+    async def openshop(self, ctx:SlashContext, type = "General", plan = "N/A", time = "N/A"):
+        if not helpers.is_admin(ctx): return
+        shop_embed = embeds.getShopHoursEmbed(type, plan, time)
+        await ctx.send(embed=shop_embed)
 
     '''
         Sends out an embeded list of rules
