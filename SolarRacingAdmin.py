@@ -92,6 +92,9 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING
     )
     async def bot_say(self, ctx: SlashContext, message: str = "GO SEAWOLVES!"):
-        if not helpers.is_admin(ctx): return
-        if not helpers.is_tester(ctx): return
-        await ctx.channel.send(message)
+        is_admin = helpers.is_admin(ctx)
+        is_helper =helpers.is_tester(ctx)
+        if is_admin or is_helper:
+            await ctx.channel.send(message)
+        else:
+            return
