@@ -31,10 +31,10 @@ async def rules(ctx: SlashContext):
         from embeds import getTestEmbeds
 """
 
-def getShopHoursEmbed(type, plan, estimated_time):
+def getShopHoursEmbed(type, plan, estimated_time, sessionNumber):
     embed = Embed(
         color = 0x00FFFF,
-        title = f'SHOP OPEN (Session #{1})',
+        title = f'SHOP OPEN (Session #{sessionNumber})',
         fields=[
             EmbedField(
                 name = 'Shop Type',

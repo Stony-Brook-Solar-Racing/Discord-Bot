@@ -3,6 +3,7 @@ import interactions
 from interactions import Button, Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option, ButtonStyle
 from interactions import slash_command, SlashContext
 import helpers, embeds
+import DatabaseManager
 
 # This file contains the following slash commands:
 # (ADMIN) sendrules - has the bot send out embeded list of rules
@@ -11,6 +12,19 @@ import helpers, embeds
 
 class SolarRacing(Extension):
 
+    '''
+        Opens the shop with given parameters
+        Has default options "General" "N/A" "N/A"
+        Dynamically increments session shop #
+
+        ARGS:
+            type: String, the type of shop hours 
+            plan: String, what you intend to do
+            time: String, how long you plan to be there
+
+        RETURNS:
+            nada
+    '''
     @slash_command(name="openshop", description="send an embed to describe your shop hours")
     @slash_option(
         name="type",
@@ -32,8 +46,8 @@ class SolarRacing(Extension):
     )
     async def openshop(self, ctx:SlashContext, type = "General", plan = "N/A", time = "N/A"):
         if not helpers.verify_access(ctx): return #Checks access
-
-        shop_embed = embeds.getShopHoursEmbed(type, plan, time)
+        sessionNumber = DatabaseManager.incrementSessionNumber()
+        shop_embed = embeds.getShopHoursEmbed(type, plan, time, sessionNumber)
         await ctx.send(embed=shop_embed)
 
     '''

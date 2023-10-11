@@ -49,15 +49,11 @@ very, cool.
 In order to setup your own virtual environment, you should clone this repository and access a terminal (either in VScode or
 standalone) whos current working directory (cd) is the root of the project folder.
 
-1. Run **"python -m venv myenv"**. This command creates a new virtual environment named "myenv". You should name is "myenv" because
-that is the name of the folder that gets ignored in .gitignore. You do not want your virtual environment to be uploaded to github.
+0. Use GitBash terminal
 
-**(NOTE):** If you got an error while trying to run that, there are two things you can do. First, "pip install virtualenv" and then
-try "virtualenv myenv". If that does not work, contact me or google any errors you have. Warning, I do not recommend changing the
-Execution-Policy on your device, as you may find. Although this works, it's probably a no no. Don't ask me. It's just a no no (probably).
+1. First, run **"pip install virtualenv"** and then run **"virtualenv myenv"**. This command creates a new virtual environment named "myenv". You should name is "myenv" because that is the name of the folder that gets ignored in .gitignore. You do not want your virtual environment to be uploaded to github. If that does not work, contact me or google any errors you have.
 
-2. After that has finished, you should now have a folder named "myenv". To activate it, run **"myenv/Scripts/activate"**. You will now notice
-a "(myenv)" in front of your terminal. Congratulations. Anything you run will now run on this virtual environment. That is, libraries you
+2. After that has finished, you should now have a folder named "myenv". To activate it, run **"source myenv/Scripts/activate"**. You will now notice a "(myenv)" in front of your terminal. Congratulations. Anything you run will now run on this virtual environment. That is, libraries you
 install will NOT be downloaded to your computer, but rather to this folder. If you delete this folder, you effectively delete the libraries.
 Likewise, trying to run the bot when you are not in "(myenv)" mode will warn that the libraries are not installed, because they ONLY
 exist on the virtual environment.
