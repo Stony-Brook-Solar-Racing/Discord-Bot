@@ -55,6 +55,19 @@ def getShopHoursEmbed(type, plan, estimated_time, sessionNumber):
     )
     return embed
 
+def getShopHoursClosedEmbed():
+    embed = Embed(
+        color = 0x00FFFF,
+        title = f'SHOP CLOSED',
+        fields=[
+            EmbedField(
+                name = 'goodbye. come back next time. we\'ll miss you.',
+                value ='👋'
+            )
+        ]
+    )
+    return embed
+
 """
     The testing Embed used to demonstrate how
     embeds are created and customized.

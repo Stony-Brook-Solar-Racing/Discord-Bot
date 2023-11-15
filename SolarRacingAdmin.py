@@ -51,6 +51,15 @@ class SolarRacing(Extension):
         await ctx.send(embed=shop_embed)
 
     '''
+        Close the shop. No parameters
+    '''
+    @slash_command(name="closeshop", description="send an embed to shut it down")
+    async def closeshop(self, ctx:SlashContext):
+        if not helpers.verify_access(ctx): return #Checks access
+        shop_embed = embeds.getShopHoursClosedEmbed()
+        await ctx.send(embed=shop_embed)
+
+    '''
         Sends out an embeded list of rules
 
         ARGS:
