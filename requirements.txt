@@ -12,3 +12,4 @@ pymongo==4.6.0
 tomli==2.0.1
 typing_extensions==4.8.0
 yarl==1.9.2
+gspread==6.1.2

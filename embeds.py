@@ -26,7 +26,7 @@ async def rules(ctx: SlashContext):
     This file (embeds.py) will store all embed information
     that needs to be sent out by the bot. Can return one embed,
     or an array of embeds, depending on your use case.
-    
+
     Usage:
         from embeds import getTestEmbeds
 """
@@ -73,7 +73,7 @@ def getShopHoursClosedEmbed():
     embeds are created and customized.
 
     Args: No Args
-        
+
     Returns:
         Embed array with a single embed
 """
@@ -97,7 +97,7 @@ def getTestEmbeds():
     The rules Embed so club members behave.
 
     Args: No Args
-        
+
     Returns:
         Embed array with a single embed
 """
@@ -116,7 +116,7 @@ def getRulesEmbeds():
             description="We will not allow discrimination or hazing in any form on this server. Be reasonable in understanding these rules.",
             color=color
         ),
-        
+
         Embed(
             title="Keep Profanity to a Minimum",
             description="Swearing is a form of expressing human emotion, and we will not stop you from expressing those emotions, but please try to refrain from using it openly. Any derogatory language directed at others will not be tolerated.",
@@ -169,3 +169,13 @@ def getRulesEmbeds():
     ]
 
     return embeds
+
+# Embed for people in Shop
+def get_people_in_shop(names):
+    embed = Embed(
+        title="Who's in the shop?",
+        description='\n'.join(names)
+        # description="names"
+    )
+
+    return embed

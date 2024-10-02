@@ -17,6 +17,7 @@ async def on_startup():
 
 # Load the extra, modularized, files.
 bot.load_extension("SolarRacingAdmin")
+bot.load_extension("NonAdmin")
 
 # Start up the bot
 bot.start(bot_token)
