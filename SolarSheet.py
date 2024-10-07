@@ -57,7 +57,11 @@ def get_ppl_in_shop_names() -> list[str]:
     if count == 0:
         return []
     
-    return record_sheet.get_values(f"A3:B{SHOP_ROWS_OFFSET + count}")[0]
+    people = get_ppl_in_shop();
+    names = [];
+    for person in people:
+        names.append(person[0]);
+    return names;
 
 """
     Sheet2 Formatting
