@@ -179,3 +179,25 @@ def get_people_in_shop(names):
     )
 
     return embed
+
+# Embed for leaderboard
+def get_leaderboard(people):
+    largest_name = 0;
+    largest_time = 0;
+    for person in people:
+        if len(person[0]) > largest_name:
+            largest_name = len(person[0]);
+        if len(person[1]) > largest_time:
+            largest_time = len(person[1]);
+    format_str = "{:<"+str(largest_name)+"} {:<"+str(largest_time)+"}";
+    print(format_str);
+    formatted_leaderboard = "";
+    for person in people:
+       formatted_leaderboard += format_str.format(person[0], person[1])+"\n";
+    print(formatted_leaderboard);
+    embed = Embed(
+            title="Leaderboard",
+            description=formatted_leaderboard
+            #description='\n'.join("{:<"+{largest_name}+"}".format(person[0]))
+    );
+    return embed;

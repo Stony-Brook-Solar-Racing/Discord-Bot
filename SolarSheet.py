@@ -117,8 +117,6 @@ def shop_remove_person(full_name: str = None, index=None):
 
 def get_leaderboard() -> list[list[str]]:
     count = int(leaderboard_sheet.acell('B1').value);
-    print(count);
-    done = False;
     row_start = SHOP_ROWS_OFFSET+count;
     rows = leaderboard_sheet.batch_get(
        [f'A3:B{row_start}']
