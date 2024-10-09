@@ -186,7 +186,12 @@ def get_leaderboard(people):
     times = "";
     for person in people:
         names += person[0]+"\n";
-        times += person[1]+"\n";
+        if(int(person[1])/60 > 1):
+            hours = int(int(person[1])/60);
+            mins = int(int(person[1])%60);
+            times += str(hours)+"Hrs "+str(mins)+"Mins\n";
+        else:
+            times += person[1]+"Mins\n";
     embed = Embed( title="Leaderboard" );
     embed.add_field("Name", names , True);
     embed.add_field("Time(Mins)", times, True);
