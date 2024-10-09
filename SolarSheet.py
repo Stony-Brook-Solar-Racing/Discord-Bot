@@ -12,6 +12,7 @@ gc = gspread.service_account_from_dict(credentials)
 sheets = gc.open("attendance swiper")
 worksheet = sheets.sheet1
 record_sheet = sheets.get_worksheet(1)
+leaderboard_sheet = sheets.get_worksheet(2)
 
 # DO NOT TOUCH # SET UP # DO NOT TOUCH # SET UP # DO NOT TOUCH
 # DO NOT TOUCH # SET UP # DO NOT TOUCH # SET UP # DO NOT TOUCH
@@ -56,7 +57,7 @@ def get_ppl_in_shop_names() -> list[str]:
     count = get_shop_ppl_count()
     if count == 0:
         return []
-    
+
     people = get_ppl_in_shop();
     names = [];
     for person in people:
@@ -77,9 +78,9 @@ def get_ppl_in_shop() -> list[list[str]]:
     rows = record_sheet.batch_get(
         [f'A3:B{row_start}']
     )
-    
+
     return rows[0]
-    
+
 def shop_add_person(full_name: str, time: str):
     count = get_shop_ppl_count()
     record_sheet.insert_row([full_name, time], get_shop_ppl_count() + SHOP_ROWS_OFFSET + 1 )
@@ -87,11 +88,11 @@ def shop_add_person(full_name: str, time: str):
 
 def shop_remove_person(full_name: str = None, index=None):
     ppl = get_ppl_in_shop()
-    
+
     if len(ppl) == 0:
         print('Cannot remove person from empty list')
         return
-    
+
     row_i = SHOP_ROWS_OFFSET + 1
 
     # if index is specified
@@ -99,14 +100,14 @@ def shop_remove_person(full_name: str = None, index=None):
         record_sheet.delete_rows(row_i + index)
         update_shop_ppl_count(get_shop_ppl_count() - 1) 
 
-    # otherwise use the name to find row
+        # otherwise use the name to find row
     elif full_name is not None:
         matches = [i for i, row in enumerate(ppl) if row[0] == full_name]
-        
+
         if len(matches) == 0:
             print('Name does not exists in the list')
             return None
-        
+
         init_time = ppl[matches[0]][1]
         record_sheet.delete_rows(row_i + matches[0])
         update_shop_ppl_count(get_shop_ppl_count() - 1) 
@@ -114,3 +115,12 @@ def shop_remove_person(full_name: str = None, index=None):
     else:
         raise Exception("Neither full_name or index parameters were given")
 
+def get_leaderboard() -> list[list[str]]:
+    count = int(leaderboard_sheet.acell('B1').value);
+    print(count);
+    done = False;
+    row_start = SHOP_ROWS_OFFSET+count;
+    rows = leaderboard_sheet.batch_get(
+       [f'A3:B{row_start}']
+    );
+    return rows[0];

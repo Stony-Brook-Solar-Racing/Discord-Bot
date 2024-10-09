@@ -3,10 +3,15 @@ import SolarSheet
 import embeds
 
 class NonAdmin(Extension):
+    SolarSheet.get_leaderboard();
+
     # Check whos in shop currently
     @slash_command(name="peoplein", description="send an embed of who's in the shop")
     async def peoplein(self, ctx: SlashContext):
         names = SolarSheet.get_ppl_in_shop_names()
         shop_embed = embeds.get_people_in_shop(names)
         await ctx.send(embed=shop_embed);
-        # await ctx.send("test again")
+    
+    #@slash_command(name="leaderboard", description="send an embed of the leaderboard of times")
+    # async def leaderboard(self, ctx: SlashContext):
+
