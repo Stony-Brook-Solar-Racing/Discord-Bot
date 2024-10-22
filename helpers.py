@@ -27,7 +27,7 @@ def add(x, y):
         bool: True if the user is an admin
 '''
 def is_admin(ctx):
-    admin_role = ctx.guild.get_role(1141820845237477447)  # THIS IS THE "KEY HOLDER" ROLE
+    admin_role = ctx.guild.get_role(764221236032307272)  # THIS IS THE "E-BOARD" ROLE
     return admin_role in ctx.author.roles
 
 def is_tester(ctx):
