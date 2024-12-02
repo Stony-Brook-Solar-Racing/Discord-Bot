@@ -195,4 +195,5 @@ def get_leaderboard(people):
     embed = Embed( title="Leaderboard" );
     embed.add_field("Name", names , True);
     embed.add_field("Time(Mins)", times, True);
+    embed.add_field("Sign out if you want time!!!", " ")
     return embed;
