@@ -185,13 +185,13 @@ def get_leaderboard(people):
     names = "";
     times = "";
     for person in people:
-        names += person[0]+"\n";
-        if(int(person[1])/60 > 1):
-            hours = int(int(person[1])/60);
-            mins = int(int(person[1])%60);
-            times += str(hours)+"Hrs "+str(mins)+"Mins\n";
+        names += person[0]+" "+person[1]+"\n";
+        if(person[2].total_seconds()/3600 > 1):
+            hours = person[2].total_seconds()/3600;
+            mins = person[2].total_seconds()/60;
+            times += str(int(hours))+"h "+str(int(mins))+"m\n";
         else:
-            times += person[1]+"Mins\n";
+            times += str(int(person[2].total_seconds()/60))+"m\n";
     embed = Embed( title="Leaderboard" );
     embed.add_field("Name", names , True);
     embed.add_field("Time(Mins)", times, True);

@@ -122,3 +122,7 @@ def get_leaderboard() -> list[list[str]]:
        [f'A3:B{row_start}']
     );
     return rows[0];
+
+if __name__ == "__main__":
+    print("Testing SolarSheet")
+    print(get_leaderboard())
