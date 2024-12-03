@@ -170,8 +170,12 @@ def getRulesEmbeds():
 
     return embeds
 
+def concat_name(name):
+    return name[0]+" "+name[1]
+
 # Embed for people in Shop
 def get_people_in_shop(names):
+    names = map(concat_name, names)
     embed = Embed(
         title="Who's in the shop?",
         description='\n'.join(names)

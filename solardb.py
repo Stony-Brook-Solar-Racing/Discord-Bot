@@ -69,4 +69,4 @@ class solardb:
 if __name__ == "__main__":
     print("In freakydb, TESTING")
     db = solardb()
-    print(db.get_leaderboard()[0][2])
+    print(db.people_in())
