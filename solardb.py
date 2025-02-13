@@ -1,5 +1,6 @@
 import psycopg
 from datetime import datetime
+from datetime import timedelta
 
 import json
 with open('/home/racer/solardb_config.json', 'r') as conf:
@@ -24,7 +25,7 @@ class solardb:
                         (first_name, last_name))
             data = cur.fetchone()
             return None if data == None else data[0];
-    
+
     def people_in(self) -> list[list[str]]:
         with self.connection.cursor() as cur:
             cur.execute("""
@@ -65,6 +66,36 @@ class solardb:
                         """)
             people = cur.fetchall()
             return people
+    def shop_closed(self):
+        with self.connection.cursor() as cur:
+            # Get whos in shop
+            members = self.people_in()
+            for person in members:
+                # Get time delta
+                cur.execute("""
+                            SELECT last_swipe, shop_time
+                            FROM members
+                            WHERE first_name = %s AND last_name = %s
+                            """,
+                            (person[0], person[1]))
+                time = cur.fetchone()
+                time_delta = datetime.now() - time[0]
+                total_time = time[1] + time_delta if time_delta < timedelta(hours=1) else time[1] + timedelta(hours=1) 
+
+                # Sign the person out and update their time
+                cur.execute("""
+                            UPDATE members
+                            SET in_shop = False, shop_time = %s
+                            WHERE first_name = %s AND last_name = %s
+                            """,
+                            (total_time, person[0], person[1]))
+                cur.execute("""
+                            INSERT INTO logs
+                            VALUES (%s, %s, False, NOW())
+                            """,
+                            (person[0], person[1]))
+
+            self.connection.commit()
 
 if __name__ == "__main__":
     print("In freakydb, TESTING")

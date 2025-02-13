@@ -3,6 +3,7 @@ import interactions
 from interactions import Button, Embed, Extension, File, OptionType, SlashCommandChoice, check, slash_command, slash_option, ButtonStyle
 from interactions import slash_command, SlashContext
 import helpers, embeds
+from solardb import solardb
 import DatabaseManager
 
 # This file contains the following slash commands:
@@ -58,6 +59,7 @@ class SolarRacing(Extension):
         if not helpers.verify_access(ctx): return #Checks access
         shop_embed = embeds.getShopHoursClosedEmbed()
         await ctx.send(embed=shop_embed)
+        solardb().shop_closed()
 
     '''
         Sends out an embeded list of rules
