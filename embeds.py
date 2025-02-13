@@ -190,7 +190,7 @@ def get_leaderboard(people):
     times = "";
     count = 1;
     for person in people:
-        names += str(count)+". "+person[0]+" "+person[1]+"\n";
+        names += str(count)+" "+person[0]+" "+person[1]+"\n";
         if(person[2].total_seconds()/3600 > 1):
             hours = person[2].total_seconds()/3600;
             mins = (person[2].total_seconds()/60)%60;
