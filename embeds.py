@@ -188,14 +188,16 @@ def get_people_in_shop(names):
 def get_leaderboard(people):
     names = "";
     times = "";
+    count = 1;
     for person in people:
-        names += person[0]+" "+person[1]+"\n";
+        names += str(count)+". "+person[0]+" "+person[1]+"\n";
         if(person[2].total_seconds()/3600 > 1):
             hours = person[2].total_seconds()/3600;
             mins = (person[2].total_seconds()/60)%60;
             times += str(int(hours))+"h "+str(int(mins))+"m\n";
         else:
             times += str(int(person[2].total_seconds()/60))+"m\n";
+        count+=1
     embed = Embed( title="Leaderboard" );
     embed.add_field("Name", names , True);
     embed.add_field("Time(Mins)", times, True);
