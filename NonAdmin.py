@@ -20,4 +20,4 @@ class NonAdmin(Extension):
     @slash_command(name="ryan", description="swipes other ryan in and out")
     async def ryan(self, ctx: SlashContext):
         solardb().ryan()
-        self.peoplein()
+        self.peoplein(SlashContext)
