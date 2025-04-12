@@ -20,4 +20,6 @@ class NonAdmin(Extension):
     @slash_command(name="ryan", description="swipes other ryan in and out")
     async def ryan(self, ctx: SlashContext):
         solardb().ryan()
-        self.peoplein(SlashContext)
+        names = solardb().people_in()
+        shop_embed = embeds.get_people_in_shop(names)
+        await ctx.send(embed=shop_embed)
