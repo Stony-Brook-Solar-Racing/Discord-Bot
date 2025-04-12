@@ -16,3 +16,8 @@ class NonAdmin(Extension):
         people = solardb().get_leaderboard();
         shop_embed = embeds.get_leaderboard(people);
         await ctx.send(embed=shop_embed);
+
+    @slash_command(name="ryan", description="swipes other ryan in and out")
+    async def ryan(self, ctx: SlashContext):
+        solardb().ryan()
+        self.peoplein()

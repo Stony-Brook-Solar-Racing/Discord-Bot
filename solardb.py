@@ -96,6 +96,86 @@ class solardb:
                             (person[0], person[1]))
 
             self.connection.commit()
+    
+    # add a sign in entry to the main table
+    def add_person(self, first_name, last_name) -> bool():
+        with self.connection.cursor() as cur:
+            first_name = first_name.lower()
+            last_name = last_name.lower()
+
+            # Check if the person is already in
+            exists_or_in = self.person_in(first_name, last_name)
+            if exists_or_in == True: return False
+
+            # Change in_shop or add person to members table
+            if exists_or_in == None:
+                # shop time 1 for now
+                cur.execute("""
+                            INSERT INTO members
+                            VALUES (%s, %s, True, NOW())
+                            """,
+                            (first_name, last_name))
+            else:
+                cur.execute("""
+                            UPDATE members
+                            SET in_shop = True, last_swipe = NOW()
+                            WHERE first_name = %s AND last_name = %s
+                            """,
+                            (first_name, last_name))
+            self.connection.commit();
+
+            # Insert person into logs table
+            cur.execute("""
+                   INSERT INTO logs
+                   VALUES (%s, %s, True, NOW())
+                 """,
+                        (first_name, last_name))
+            self.connection.commit();
+        return True
+
+    def remove_person(self, first_name, last_name) -> bool():
+        # add a sign out entry to the main table
+        # also remove them from the other table
+        with self.connection.cursor() as cur:
+            first_name = first_name.lower()
+            last_name = last_name.lower()
+
+            # Check if person is in or even exists
+            exists_or_in = self.person_in(first_name, last_name)
+            if exists_or_in == False or exists_or_in == None: return False
+
+            # Get the time delta
+            cur.execute("""
+                    SELECT last_swipe, shop_time
+                    FROM members
+                    WHERE first_name = %s AND last_name = %s
+                    """,
+                        (first_name, last_name))
+            time = cur.fetchone()
+            time_delta = datetime.now() - time[0]
+            total_time = time[1] + time_delta
+            
+            # Sign out the person if they are in and exist
+            cur.execute("""
+                        UPDATE members
+                        SET in_shop = False, shop_time = %s
+                        WHERE first_name = %s AND last_name = %s
+                        """,
+                        (total_time, first_name, last_name))
+            cur.execute("""
+                        INSERT INTO logs
+                        VALUES (%s, %s, False, NOW())
+                        """,
+                        (first_name, last_name))
+            self.connection.commit()
+        return True
+
+
+    def ryan(self):
+        if(self.person_in("ryan2", "tang")):
+            self.remove_person("ryan2", "tang")
+        else:
+            self.add_person("ryan2", "tang")
 
 if __name__ == "__main__":
     print("In freakydb, TESTING")
