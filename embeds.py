@@ -203,3 +203,13 @@ def get_leaderboard(people):
     embed.add_field("Time(Mins)", times, True);
     embed.add_field("Sign out if you want time!!!", " ")
     return embed;
+
+def print_tasks(tasks):
+    embeds = []
+    for t in tasks:
+        embed = Embed( title=f"{t.get('SUMMARY')}" )
+        embed.add_field("Due", f"{t.get('DUE')}")
+        embed.add_field("Notes", f"{t.get('DESCRIPTION')}")
+        embed.add_field("Status", f"{t.get('STATUS')}")
+        embeds.append(embed)
+    return embeds
