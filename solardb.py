@@ -170,13 +170,6 @@ class solardb:
             self.connection.commit()
         return True
 
-
-    def ryan(self):
-        if(self.person_in("ryan2", "tang")):
-            self.remove_person("ryan2", "tang")
-        else:
-            self.add_person("ryan2", "tang")
-
 if __name__ == "__main__":
     print("In freakydb, TESTING")
     db = solardb()
