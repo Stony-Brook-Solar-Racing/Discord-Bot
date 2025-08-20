@@ -1,5 +1,7 @@
 # Imports
 from interactions import Embed, EmbedField
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 """
 
@@ -213,3 +215,144 @@ def print_tasks(tasks):
         embed.add_field("Status", f"{t.get('STATUS')}")
         embeds.append(embed)
     return embeds
+
+# =================== Nextcloud Tasks Embeds ===========================
+from pull_tasks import (
+    ical_unescape, clamp,
+    parse_due, humanize_due,
+)
+
+EMBED_COLOR_BY_STATUS = {
+    "NEEDS-ACTION": 0xF1C40F,  # yellow
+    "IN-PROCESS": 0x3498DB,  # blue
+    "COMPLETED": 0x2ECC71,  # green
+    "CANCELLED": 0x95A5A6,  # gray
+}
+STATUS_ORDER = {
+    "NEEDS-ACTION": 0,
+    "IN-PROCESS": 1,
+    "": 2,   # unknown / missing
+    "CANCELLED": 3,
+    "COMPLETED": 4,   # push completed to the bottom
+}
+
+def _sort_key_for_task(task: dict, *, tz: str):
+    status = (task.get("STATUS") or "").upper()
+    bucket = STATUS_ORDER.get(status, 2)
+
+    # parse due; put undated after dated
+    due_params = task.get("_DUE_PARAMS") or {}
+    due_raw = task.get("DUE")
+    due_parsed, is_date_only = parse_due(due_raw, due_params, default_tz=tz)
+    # normalize to a datetime for comparison (date-only -> midnight in tz)
+    if due_parsed is None:
+        due_key = (1, None)  # undated goes after dated
+    else:
+        if is_date_only:
+            due_dt = datetime(due_parsed.year, due_parsed.month, due_parsed.day, 0, 0, tzinfo=ZoneInfo(tz))
+        else:
+            due_dt = due_parsed.astimezone(ZoneInfo(tz))
+        due_key = (0, due_dt)
+
+    summary = (task.get("SUMMARY") or "").lower()
+    return (bucket, due_key, summary)
+
+def _format_child_line(child: dict, *, tz: str) -> str:
+    title = ical_unescape(child.get("SUMMARY")) or "(no summary)"
+    status = (child.get("STATUS") or "").upper()
+    due_params = child.get("_DUE_PARAMS") or {}
+    due_raw = child.get("DUE")
+    due_parsed, is_date_only = parse_due(due_raw, due_params, default_tz=tz)
+    due_human = humanize_due(due_parsed, is_date_only, display_tz=tz) if due_parsed else (due_raw or "—")
+
+    return f"• {clamp(title, 80)} — {clamp(due_human, 60)} — {status or 'UNKNOWN-STATUS'}"
+
+def build_parent_task_embeds_grouped_by_list(by_uid: dict, children_of: dict, listname_of_uid: dict, *, tz: str = "America/New_York"):
+    for uid, task in by_uid.items():
+        p = task.get("_PARENT_UID")
+        if p:
+            task["_PARENT_LISTNAME"] = listname_of_uid.get(p)
+            task["_PARENT_SUMMARY"] = (by_uid.get(p) or {}).get("SUMMARY")
+
+    # Group UIDs by list
+    from collections import defaultdict
+    uids_by_list = defaultdict(list)
+    for uid in by_uid.keys():
+        uids_by_list[listname_of_uid.get(uid, "(unknown)")].append(uid)
+
+    all_uids = set(by_uid.keys())
+
+    embeds_by_list = {}
+
+    for list_name, uids in uids_by_list.items():
+        # parents = tasks in this list with no parent (or parent not present)
+        parents = []
+        for uid in uids:
+            t = by_uid[uid]
+            p = t.get("_PARENT_UID")
+            if not p or p not in all_uids:
+                parents.append(uid)
+
+        # Build embeds
+        embeds = []
+        for puid in sorted(parents, key=lambda u: _sort_key_for_task(by_uid[u], tz=tz)):
+            parent = by_uid[puid]
+            child_uids = children_of.get(puid, [])
+            children = [by_uid[cid] for cid in child_uids if cid in by_uid]
+            embeds.append(build_parent_task_embed(parent, children, tz=tz))
+
+        embeds_by_list[list_name] = embeds
+
+    return embeds_by_list
+
+def build_parent_task_embed(parent: dict, children: list[dict], *, tz: str = "America/New_York") -> Embed:
+    status = (parent.get("STATUS") or "NEEDS-ACTION").upper()
+    color  = EMBED_COLOR_BY_STATUS.get(status, 0x7289DA)
+
+    emb = Embed(color=color)
+
+    parent_uid = parent.get("_PARENT_UID")
+    if parent_uid and parent_uid not in ():
+        p_name  = parent.get("_PARENT_SUMMARY") or parent_uid
+        p_list  = parent.get("_PARENT_LISTNAME")
+        sub_val = f"{p_name} — {p_list}" if p_list else p_name
+        emb.add_field(name="Subtask of", value=clamp(sub_val, 1024), inline=False)
+
+    title = ical_unescape(parent.get("SUMMARY")) or "(no summary)"
+    emb.add_field(name="Task", value=clamp(title, 1024), inline=False)
+
+    p_due_params = parent.get("_DUE_PARAMS") or {}
+    p_due_raw = parent.get("DUE")
+    p_due_parsed, p_is_date_only = parse_due(p_due_raw, p_due_params, default_tz=tz)
+    p_due_human = humanize_due(p_due_parsed, p_is_date_only, display_tz=tz) if p_due_parsed else (p_due_raw or "—")
+    notes = ical_unescape(parent.get("DESCRIPTION"))
+    if notes:
+        emb.add_field(name="Notes", value=clamp(notes, 1024), inline=False)
+
+    emb.add_field(name="Due Date", value=clamp(p_due_human, 1024), inline=True)
+
+    emb.add_field(name="Status", value=status, inline=True)
+
+    if children:
+        children_sorted = sorted(children, key=lambda c: _sort_key_for_task(c, tz=tz))
+        lines = []
+        hidden = 0
+        current_len = 0
+        for ch in children_sorted:
+            line = _format_child_line(ch, tz=tz)
+            extra = len(line) + (1 if lines else 0)
+            if current_len + extra > 1024:
+                hidden += 1
+                continue
+            lines.append(line)
+            current_len += extra
+        if hidden:
+            tail = f"\n… +{hidden} more"
+            if current_len + len(tail) <= 1024:
+                lines.append(tail)
+        emb.add_field(name="Subtasks", value="\n".join(lines) if lines else "—", inline=False)
+
+    list_name = parent.get("_LISTNAME") or "(unknown list)"
+    emb.set_footer(text=f"{list_name} • Nextcloud Tasks")
+    return emb
+# ======================================================================
