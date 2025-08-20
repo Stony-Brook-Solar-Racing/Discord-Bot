@@ -35,7 +35,7 @@ PROPFIND_BODY = """<?xml version="1.0" encoding="utf-8"?>
 
 NS = {"d": "DAV:", "c": "urn:ietf:params:xml:ns:caldav"}
 def get_config(account: str) -> tuple[str, str, tuple[str, str]]:
-    with open("config.json", "r") as conf:
+    with open("/home/racer/solarcloud_config.json", "r") as conf:
         config = json.load(conf)
         account = account.lower()
         if account == "admin":
