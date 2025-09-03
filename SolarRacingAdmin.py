@@ -155,9 +155,12 @@ class SolarRacing(Extension):
         AUTH = config[2]
 
         try:
-            calendars = await asyncio.to_thread(
-                calendars_with_vtodo, NEXTCLOUD_URL, CALDAV_HOME, AUTH
-            )
+            if account == "admin":
+                calendars = [("/remote.php/dav/calendars/admin/administrative-tasks/", "Administrative Tasks")]
+            else:
+                calendars = await asyncio.to_thread(
+                    calendars_with_vtodo, NEXTCLOUD_URL, CALDAV_HOME, AUTH
+                )
             if not calendars:
                 await ctx.send("No task lists (VTODO calendars) found.")
                 return
