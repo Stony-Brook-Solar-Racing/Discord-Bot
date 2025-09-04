@@ -137,6 +137,8 @@ class SolarRacing(Extension):
         ]
     )
     async def send_tasks(self, ctx: SlashContext, account="software"):
+        if not helpers.verify_access(ctx): return #Checks access
+
         from collections import defaultdict
         import asyncio
         from embeds import build_parent_task_embeds_grouped_by_list
