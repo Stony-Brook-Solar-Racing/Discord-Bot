@@ -296,10 +296,11 @@ def build_parent_task_embeds_grouped_by_list(by_uid: dict, children_of: dict, li
         # Build embeds
         embeds = []
         for puid in sorted(parents, key=lambda u: _sort_key_for_task(by_uid[u], tz=tz)):
-            parent = by_uid[puid]
-            child_uids = children_of.get(puid, [])
-            children = [by_uid[cid] for cid in child_uids if cid in by_uid]
-            embeds.append(build_parent_task_embed(parent, children, tz=tz))
+            if parent.get("STATUS") != "COMPLETED":
+                parent = by_uid[puid]
+                child_uids = children_of.get(puid, [])
+                children = [by_uid[cid] for cid in child_uids if cid in by_uid]
+                embeds.append(build_parent_task_embed(parent, children, tz=tz))
 
         embeds_by_list[list_name] = embeds
 
