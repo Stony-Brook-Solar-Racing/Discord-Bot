@@ -95,7 +95,6 @@ class solardb:
                 total_time = time[1] + time_delta if time_delta < timedelta(hours=1) else time[1] + timedelta(hours=1) 
 
                 # Sign the person out and update their time
-                '''
                 cur.execute("""
                             UPDATE members
                             SET in_shop = False, shop_time = %s
@@ -107,9 +106,8 @@ class solardb:
                             VALUES (%s, %s, %s, False, NOW())
                             """,
                             (id_hash, person[1], person[2]))
-                '''
 
-            # self.connection.commit()
+            self.connection.commit()
     
 if __name__ == "__main__":
     print("In solardb, TESTING")
