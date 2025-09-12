@@ -108,6 +108,30 @@ class solardb:
                             (id_hash, person[1], person[2]))
 
             self.connection.commit()
+
+    def add_time(self, first_name, last_name, hour): 
+        with self.connection.cursor() as cur:
+            cur.execute("""
+                SELECT last_swipe, shop_time
+                FROM members
+                WHERE first_name = %s AND last_name = %s
+                """,
+                        (first_name, last_name))
+
+            time = cur.fetchone()
+            if time == None:
+                return None
+            total_time = time[1] + timedelta(hours=hour)
+            cur.execute("""
+                UPDATE members
+                SET in_shop = False, shop_time = %s
+                WHERE first_name = %s AND last_name = %s
+                """,
+                        (total_time, first_name, last_name))
+
+            self.connection.commit()
+        return 1
+
     
 if __name__ == "__main__":
     print("In solardb, TESTING")

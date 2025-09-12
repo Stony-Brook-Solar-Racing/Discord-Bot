@@ -203,6 +203,34 @@ class SolarRacing(Extension):
                     continue
                 for batch in chunked(embeds, 10):
                     await ctx.send(embeds=batch)
+            
 
         except Exception as e:
             await ctx.send(f"Error while fetching tasks: `{e}`")
+
+    @slash_command(name="add_time", description="Add time to the leaderboard")
+    @slash_option(
+        name="first_name",
+        description="first name of person",
+        required=True,
+        opt_type=OptionType.STRING,
+    )
+    @slash_option(
+        name="last_name",
+        description="last name of person",
+        required=True,
+        opt_type=OptionType.STRING,
+    )
+    @slash_option(
+        name="time",
+        description="time in hours to add",
+        required=True,
+        opt_type=OptionType.STRING,
+    )
+    async def add_time(self, ctx: SlashContext, first_name, last_name, time):
+        if not helpers.verify_access(ctx): return #Checks access
+        result = solardb().add_time(first_name, last_name, float(time))
+        if result == None:
+            await ctx.send(f"{first_name} {last_name} does not exist")
+        else: 
+            await ctx.send(f"added {time} hours to {first_name} {last_name}")
