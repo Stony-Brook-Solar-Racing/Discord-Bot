@@ -8,7 +8,7 @@ class NonAdmin(Extension):
     # Check whos in shop currently
     @slash_command(name="peoplein", description="send an embed of who's in the shop")
     async def peoplein(self, ctx: SlashContext):
-        names = solardb().people_in()
+        names = solardb().people_in_names()
         shop_embed = embeds.get_people_in_shop(names)
         await ctx.send(embed=shop_embed);
 

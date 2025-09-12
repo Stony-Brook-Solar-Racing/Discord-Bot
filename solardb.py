@@ -29,6 +29,15 @@ class solardb:
     def people_in(self) -> list[list[str]]:
         with self.connection.cursor() as cur:
             cur.execute("""
+                        SELECT id_hash, first_name, last_name
+                        FROM members
+                        WHERE in_shop = True
+                        """)
+            return cur.fetchall()
+
+    def people_in_names(self) -> list[list[str]]:
+        with self.connection.cursor() as cur:
+            cur.execute("""
                         SELECT first_name, last_name
                         FROM members
                         WHERE in_shop = True
@@ -51,126 +60,58 @@ class solardb:
             for member in members:
                 cur.execute("""
                             INSERT INTO logs
-                            VALUES (%s, %s, False, NOW())
+                            VALUES (%s, %s, %s, False, NOW())
                             """,
-                            (member[0], member[1]))
+                            (member[0], member[1]), member[2])
             self.connection.commit()
         return True
 
     def get_leaderboard(self):
         with self.connection.cursor() as cur:
             cur.execute("""
-                        SELECT first_name,last_name,shop_time
+                        SELECT first_name, last_name, shop_time
                         FROM members
                         ORDER BY shop_time DESC
                         """)
             people = cur.fetchall()
             return people
+
     def shop_closed(self):
         with self.connection.cursor() as cur:
             # Get whos in shop
             members = self.people_in()
             for person in members:
+                id_hash = person[0]
+                print(id_hash)
                 # Get time delta
                 cur.execute("""
                             SELECT last_swipe, shop_time
                             FROM members
-                            WHERE first_name = %s AND last_name = %s
+                            WHERE id_hash = %s
                             """,
-                            (person[0], person[1]))
+                            (id_hash,))
                 time = cur.fetchone()
                 time_delta = datetime.now() - time[0]
                 total_time = time[1] + time_delta if time_delta < timedelta(hours=1) else time[1] + timedelta(hours=1) 
 
                 # Sign the person out and update their time
+                '''
                 cur.execute("""
                             UPDATE members
                             SET in_shop = False, shop_time = %s
-                            WHERE first_name = %s AND last_name = %s
+                            WHERE id_hash = %s
                             """,
-                            (total_time, person[0], person[1]))
+                            (total_time, id_hash))
                 cur.execute("""
                             INSERT INTO logs
-                            VALUES (%s, %s, False, NOW())
+                            VALUES (%s, %s, %s, False, NOW())
                             """,
-                            (person[0], person[1]))
+                            (id_hash, person[1], person[2]))
+                '''
 
-            self.connection.commit()
+            # self.connection.commit()
     
-    # add a sign in entry to the main table
-    def add_person(self, first_name, last_name) -> bool():
-        with self.connection.cursor() as cur:
-            first_name = first_name.lower()
-            last_name = last_name.lower()
-
-            # Check if the person is already in
-            exists_or_in = self.person_in(first_name, last_name)
-            if exists_or_in == True: return False
-
-            # Change in_shop or add person to members table
-            if exists_or_in == None:
-                # shop time 1 for now
-                cur.execute("""
-                            INSERT INTO members
-                            VALUES (%s, %s, True, NOW())
-                            """,
-                            (first_name, last_name))
-            else:
-                cur.execute("""
-                            UPDATE members
-                            SET in_shop = True, last_swipe = NOW()
-                            WHERE first_name = %s AND last_name = %s
-                            """,
-                            (first_name, last_name))
-            self.connection.commit();
-
-            # Insert person into logs table
-            cur.execute("""
-                   INSERT INTO logs
-                   VALUES (%s, %s, True, NOW())
-                 """,
-                        (first_name, last_name))
-            self.connection.commit();
-        return True
-
-    def remove_person(self, first_name, last_name) -> bool():
-        # add a sign out entry to the main table
-        # also remove them from the other table
-        with self.connection.cursor() as cur:
-            first_name = first_name.lower()
-            last_name = last_name.lower()
-
-            # Check if person is in or even exists
-            exists_or_in = self.person_in(first_name, last_name)
-            if exists_or_in == False or exists_or_in == None: return False
-
-            # Get the time delta
-            cur.execute("""
-                    SELECT last_swipe, shop_time
-                    FROM members
-                    WHERE first_name = %s AND last_name = %s
-                    """,
-                        (first_name, last_name))
-            time = cur.fetchone()
-            time_delta = datetime.now() - time[0]
-            total_time = time[1] + time_delta
-            
-            # Sign out the person if they are in and exist
-            cur.execute("""
-                        UPDATE members
-                        SET in_shop = False, shop_time = %s
-                        WHERE first_name = %s AND last_name = %s
-                        """,
-                        (total_time, first_name, last_name))
-            cur.execute("""
-                        INSERT INTO logs
-                        VALUES (%s, %s, False, NOW())
-                        """,
-                        (first_name, last_name))
-            self.connection.commit()
-        return True
-
 if __name__ == "__main__":
-    print("In freakydb, TESTING")
+    print("In solardb, TESTING")
     db = solardb()
     print(db.people_in())

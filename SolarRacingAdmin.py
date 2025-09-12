@@ -59,7 +59,10 @@ class SolarRacing(Extension):
         if not helpers.verify_access(ctx): return #Checks access
         shop_embed = embeds.getShopHoursClosedEmbed()
         await ctx.send(embed=shop_embed)
-        solardb().shop_closed()
+        try:
+            solardb().shop_closed()
+        except Exception as e:
+            print(e)
 
     '''
         Sends out an embeded list of rules
