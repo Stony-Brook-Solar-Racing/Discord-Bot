@@ -34,6 +34,9 @@ def is_tester(ctx):
     tester_role = ctx.guild.get_role(1151599685547610143) # THIS IS THE "TESTER" ROLE
     return tester_role in ctx.author.roles
 
+def is_team_lead(ctx):
+    team_lead_role = ctx.guild.get_role(933061488648781895) # THIS IS THE "TEAM-LEAD" ROLE
+
 def verify_access(ctx):
-    if is_admin(ctx) or is_tester(ctx): return True
+    if is_admin(ctx) or is_tester(ctx) or is_team_lead(ctx): return True
     return False
