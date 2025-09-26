@@ -1,3 +1,4 @@
+import json
 from functools import wraps
 
 import embeds
@@ -38,13 +39,13 @@ def admin_only():
 
     def decorator(func):
         @wraps(func)
-        async def wrapper(ctx: interactions.CommandContext, *args, **kwargs):
+        async def wrapper(self, ctx: interactions.SlashContext, *args, **kwargs):
             if not verify_access(ctx):
                 await ctx.send(
                     "You do not have permission to use this command.", ephemeral=True
                 )
                 return
-            return await func(ctx, *args, **kwargs)
+            return await func(self, ctx, *args, **kwargs)
 
         return wrapper
 
@@ -165,8 +166,9 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING,
     )
     @admin_only()
-    async def bot_say(self, ctx: SlashContext, message: str = "GO SEAWOLVES!"):
+    async def bot_say(self, ctx: SlashContext, message: str):
         await ctx.channel.send(message)
+        await ctx.send(ephemeral=True, content="sent", delete_after=1)
 
     @slash_command(name="tasks", description="send embeds of nextcloud tasks")
     @slash_option(
