@@ -1,0 +1,6 @@
+{
+  "bot_token": "INSERT BOT TOKEN HERE",
+  "admin_roles": [764221236032307272, 1151599685547610143, 933061488648781895],
+  "psql_db": "testdb",
+  "psql_user": "postgres"
+}
