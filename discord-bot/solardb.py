@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 import psycopg
 
-with open("/home/racer/solardb_config.json", "r") as conf:
+with open("config.json", "r") as conf:
     config = json.load(conf)
 
 DBNAME = "db"
@@ -12,7 +12,7 @@ DBNAME = "db"
 class solardb:
     def __init__(self):
         self.connection = psycopg.connect(
-            f"dbname={config['dbname']} user={config['user']}"
+            f"dbname={config['psql_db']} user={config['psql_user']}"
         )
 
     def next_session(self):

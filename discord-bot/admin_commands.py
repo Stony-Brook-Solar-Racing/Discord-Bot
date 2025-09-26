@@ -20,15 +20,14 @@ from solardb import solardb
 # (ADMIN) botsay - has the bot say anything
 
 
-def verify_access(ctx):
-    super_roles = [
-        764221236032307272,  # E-board
-        1151599685547610143,  # Bot tester
-        933061488648781895,  # Team lead
-    ]
+with open("config.json") as file:
+    config = json.load(file)
 
+
+def verify_access(ctx):
+    admin_roles = config["admin_roles"]
     return any(
-        ctx.guild.get_role(role_id) in ctx.author.roles for role_id in super_roles
+        ctx.guild.get_role(role_id) in ctx.author.roles for role_id in admin_roles
     )
 
 
@@ -182,10 +181,10 @@ class SolarRacing(Extension):
         await ctx.defer(ephemeral=False)
 
         await ctx.send(f"*Sending {account}s Tasks*")
-        config = get_config(account)
-        NEXTCLOUD_URL = config[0]
-        CALDAV_HOME = config[1]
-        AUTH = config[2]
+        nc_config = get_config(account)
+        NEXTCLOUD_URL = nc_config[0]
+        CALDAV_HOME = nc_config[1]
+        AUTH = nc_config[2]
 
         try:
             if account == "admin":
