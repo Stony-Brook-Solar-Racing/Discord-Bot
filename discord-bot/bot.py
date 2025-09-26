@@ -23,15 +23,15 @@ bot_token = config["bot_token"]
 @listen()
 async def on_startup():
     await bot.change_presence(
-        status=Status.IDLE,
+        status=Status.ONLINE,
         activity=Activity(name="solar panels charge", type=ActivityType.WATCHING),
     )
     print(f"(SUCCESS) {bot.app.name} IS NOW RUNNING...")
 
 
 # Load the extra, modularized, files.
-bot.load_extension("SolarRacingAdmin")
-bot.load_extension("NonAdmin")
+bot.load_extension("admin_commands")
+bot.load_extension("normal_commands")
 
 # Start up the bot
 bot.start(bot_token)

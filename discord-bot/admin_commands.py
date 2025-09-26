@@ -1,6 +1,7 @@
-import DatabaseManager
+import json
+from functools import wraps
+
 import embeds
-import helpers
 import interactions
 from interactions import (
     Button,
@@ -20,7 +21,35 @@ from solardb import solardb
 # This file contains the following slash commands:
 # (ADMIN) sendrules - has the bot send out embeded list of rules
 # (ADMIN) botsay - has the bot say anything
-#
+
+
+with open("config.json") as file:
+    config = json.load(file)
+
+
+def verify_access(ctx):
+    admin_roles = config["admin_roles"]
+    return any(
+        ctx.guild.get_role(role_id) in ctx.author.roles for role_id in admin_roles
+    )
+
+
+def admin_only():
+    """Decorator to restrict slash commands to users passing verify_access"""
+
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(self, ctx: interactions.SlashContext, *args, **kwargs):
+            if not verify_access(ctx):
+                await ctx.send(
+                    "You do not have permission to use this command.", ephemeral=True
+                )
+                return
+            return await func(self, ctx, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
 
 
 class SolarRacing(Extension):
@@ -59,11 +88,10 @@ class SolarRacing(Extension):
         required=False,
         opt_type=OptionType.STRING,
     )
+    @admin_only()
     async def openshop(self, ctx: SlashContext, type="General", plan="N/A", time="N/A"):
-        if not helpers.verify_access(ctx):
-            return  # Checks access
-        sessionNumber = DatabaseManager.incrementSessionNumber()
-        shop_embed = embeds.getShopHoursEmbed(type, plan, time, sessionNumber)
+        session_number = solardb().next_session()
+        shop_embed = embeds.getShopHoursEmbed(type, plan, time, session_number)
         await ctx.send(embed=shop_embed)
 
     """
@@ -71,9 +99,8 @@ class SolarRacing(Extension):
     """
 
     @slash_command(name="closeshop", description="send an embed to shut it down")
+    @admin_only()
     async def closeshop(self, ctx: SlashContext):
-        if not helpers.verify_access(ctx):
-            return  # Checks access
         shop_embed = embeds.getShopHoursClosedEmbed()
         await ctx.send(embed=shop_embed)
         try:
@@ -92,10 +119,8 @@ class SolarRacing(Extension):
     """
 
     @slash_command(name="sendrules", description="send a full list of rules")
+    @admin_only()
     async def sendrules(self, ctx: SlashContext):
-        if not helpers.verify_access(ctx):
-            return  # Checks access
-
         rules_array = embeds.getRulesEmbeds()
         for rule in rules_array:
             pass
@@ -140,11 +165,10 @@ class SolarRacing(Extension):
         required=True,
         opt_type=OptionType.STRING,
     )
-    async def bot_say(self, ctx: SlashContext, message: str = "GO SEAWOLVES!"):
-        if not helpers.verify_access(ctx):
-            return  # Checks access
-
+    @admin_only()
+    async def bot_say(self, ctx: SlashContext, message: str):
         await ctx.channel.send(message)
+        await ctx.send(ephemeral=True, content="sent", delete_after=1)
 
     @slash_command(name="tasks", description="send embeds of nextcloud tasks")
     @slash_option(
@@ -159,10 +183,8 @@ class SolarRacing(Extension):
             SlashCommandChoice(name="Software", value="software"),
         ],
     )
+    @admin_only()
     async def send_tasks(self, ctx: SlashContext, account="software"):
-        if not helpers.verify_access(ctx):
-            return  # Checks access
-
         import asyncio
         from collections import defaultdict
 
@@ -173,10 +195,10 @@ class SolarRacing(Extension):
         await ctx.defer(ephemeral=False)
 
         await ctx.send(f"*Sending {account}s Tasks*")
-        config = get_config(account)
-        NEXTCLOUD_URL = config[0]
-        CALDAV_HOME = config[1]
-        AUTH = config[2]
+        nc_config = get_config(account)
+        NEXTCLOUD_URL = nc_config[0]
+        CALDAV_HOME = nc_config[1]
+        AUTH = nc_config[2]
 
         try:
             if account == "admin":
@@ -252,9 +274,8 @@ class SolarRacing(Extension):
         required=True,
         opt_type=OptionType.STRING,
     )
+    @admin_only()
     async def add_time(self, ctx: SlashContext, first_name, last_name, time):
-        if not helpers.verify_access(ctx):
-            return  # Checks access
         result = solardb().add_time(first_name, last_name, float(time))
         if result == None:
             await ctx.send(f"{first_name} {last_name} does not exist")

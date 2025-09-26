@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 import psycopg
 
-with open("/home/racer/solardb_config.json", "r") as conf:
+with open("config.json", "r") as conf:
     config = json.load(conf)
 
 DBNAME = "db"
@@ -12,8 +12,13 @@ DBNAME = "db"
 class solardb:
     def __init__(self):
         self.connection = psycopg.connect(
-            f"dbname={config['dbname']} user={config['user']}"
+            f"dbname={config['psql_db']} user={config['psql_user']}"
         )
+
+    def next_session(self):
+        with self.connection.cursor() as cur:
+            cur.execute("SELECT nextval('session_seq')")
+            return cur.fetchone()[0]
 
     # return whether the person is in the shop
     def person_in(self, first_name, last_name) -> bool():
@@ -136,6 +141,8 @@ class solardb:
             self.connection.commit()
 
     def add_time(self, first_name, last_name, hour):
+        first_name = first_name.lower()
+        last_name = last_name.lower()
         with self.connection.cursor() as cur:
             cur.execute(
                 """
@@ -146,10 +153,10 @@ class solardb:
                 (first_name, last_name),
             )
 
-            time = cur.fetchone()
-            if time == None:
+            row = cur.fetchone()
+            if row == None:
                 return None
-            total_time = time[1] + timedelta(hours=hour)
+            total_time = row[1] + timedelta(hours=hour)
             cur.execute(
                 """
                 UPDATE members
