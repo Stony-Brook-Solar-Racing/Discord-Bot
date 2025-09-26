@@ -1,12 +1,12 @@
-import requests
-import xml.etree.ElementTree as ET
-from urllib.parse import urljoin
-from collections import defaultdict
 import json
-
-from datetime import datetime, date, timezone
-from zoneinfo import ZoneInfo
 import math
+import xml.etree.ElementTree as ET
+from collections import defaultdict
+from datetime import date, datetime, timezone
+from urllib.parse import urljoin
+from zoneinfo import ZoneInfo
+
+import requests
 
 # ================== XML payloads ==================
 REPORT_BODY = """<?xml version="1.0" encoding="UTF-8"?>
@@ -34,6 +34,8 @@ PROPFIND_BODY = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 NS = {"d": "DAV:", "c": "urn:ietf:params:xml:ns:caldav"}
+
+
 def get_config(account: str) -> tuple[str, str, tuple[str, str]]:
     with open("/home/racer/solarcloud_config.json", "r") as conf:
         config = json.load(conf)
@@ -51,9 +53,12 @@ def get_config(account: str) -> tuple[str, str, tuple[str, str]]:
             USERNAME = config["MECH_USER"]
             PASSWORD = config["MECH_PASS"]
         NEXTCLOUD_URL = config["NEXTCLOUD_URL"].rstrip("/")
-        CALDAV_HOME = f"{config['CALDAV_PATH'].lstrip('/')}".rstrip("/") + f"/{USERNAME}/"
+        CALDAV_HOME = (
+            f"{config['CALDAV_PATH'].lstrip('/')}".rstrip("/") + f"/{USERNAME}/"
+        )
         AUTH = (USERNAME, PASSWORD)
     return (NEXTCLOUD_URL, CALDAV_HOME, AUTH)
+
 
 # ================== iCal helpers ==================
 def unfold_ical(text: str) -> list[str]:
@@ -64,6 +69,7 @@ def unfold_ical(text: str) -> list[str]:
         else:
             out.append(line)
     return out
+
 
 def parse_prop(line: str):
     if ":" not in line:
@@ -80,6 +86,7 @@ def parse_prop(line: str):
             params[p.upper()] = ""
     return name, params, value
 
+
 def parse_vtodos(ical_text: str):
     lines = unfold_ical(ical_text.strip())
     tasks = []
@@ -95,8 +102,8 @@ def parse_vtodos(ical_text: str):
                 "DESCRIPTION": None,
                 "STATUS": None,
                 "COMPLETED": None,
-                "_PARENT_UID": None,   # if this task is a child
-                "_CHILD_UIDS": [],     # if this task declares children (rare)
+                "_PARENT_UID": None,  # if this task is a child
+                "_CHILD_UIDS": [],  # if this task declares children (rare)
             }
             continue
 
@@ -125,15 +132,20 @@ def parse_vtodos(ical_text: str):
             # Save raw value (first seen) and params (for TZID/DATE handling)
             if task.get("DUE") is None:
                 task["DUE"] = value
-                task["_DUE_PARAMS"] = params  # NEW: keep ICS params like TZID, VALUE=DATE
+                task["_DUE_PARAMS"] = (
+                    params  # NEW: keep ICS params like TZID, VALUE=DATE
+                )
 
     return tasks
+
 
 # ================== CalDAV helpers ==================
 def calendars_with_vtodo(base_url: str, home_path: str, auth):
     url = urljoin(base_url + "/", home_path.lstrip("/"))
     headers = {"Depth": "1", "Content-Type": "application/xml; charset=utf-8"}
-    r = requests.request("PROPFIND", url, auth=auth, headers=headers, data=PROPFIND_BODY)
+    r = requests.request(
+        "PROPFIND", url, auth=auth, headers=headers, data=PROPFIND_BODY
+    )
     if r.status_code != 207:
         raise RuntimeError(f"Calendar discovery failed: {r.status_code} {r.text}")
 
@@ -154,16 +166,22 @@ def calendars_with_vtodo(base_url: str, home_path: str, auth):
         compset = resp.find(".//c:supported-calendar-component-set", NS)
         include = True
         if compset is not None:
-            names = {(comp.get("name") or "").upper() for comp in compset.findall("c:comp", NS)}
+            names = {
+                (comp.get("name") or "").upper()
+                for comp in compset.findall("c:comp", NS)
+            }
             include = "VTODO" in names
 
         if not include:
             continue
 
         name_el = resp.find(".//d:displayname", NS)
-        displayname = name_el.text if name_el is not None else href.rstrip("/").split("/")[-1]
+        displayname = (
+            name_el.text if name_el is not None else href.rstrip("/").split("/")[-1]
+        )
         out.append((href, displayname))
     return out
+
 
 def report_vtodos(base_url: str, cal_href: str, auth):
     url = urljoin(base_url + "/", cal_href.lstrip("/"))
@@ -185,8 +203,11 @@ def report_vtodos(base_url: str, cal_href: str, auth):
             found.append(vt)
     return found
 
+
 # ================== Printing: grouped by List ==================
-def _print_single_grouped(uid, by_uid, children_local, listname_of_uid, allowed_uids, indent, seen):
+def _print_single_grouped(
+    uid, by_uid, children_local, listname_of_uid, allowed_uids, indent, seen
+):
     if uid in seen:
         return
     seen.add(uid)
@@ -213,7 +234,16 @@ def _print_single_grouped(uid, by_uid, children_local, listname_of_uid, allowed_
     print()
 
     for child_uid in children_local.get(uid, []):
-        _print_single_grouped(child_uid, by_uid, children_local, listname_of_uid, allowed_uids, indent + 1, seen)
+        _print_single_grouped(
+            child_uid,
+            by_uid,
+            children_local,
+            listname_of_uid,
+            allowed_uids,
+            indent + 1,
+            seen,
+        )
+
 
 def print_grouped_by_list(by_uid, children_of, listname_of_uid):
     # Build list -> [uids]
@@ -238,34 +268,52 @@ def print_grouped_by_list(by_uid, children_of, listname_of_uid):
         print(f"=== List: {list_name} ===")
         seen = set()
         for uid in roots_in_list:
-            _print_single_grouped(uid, by_uid, children_local, listname_of_uid, allowed, indent=0, seen=seen)
+            _print_single_grouped(
+                uid,
+                by_uid,
+                children_local,
+                listname_of_uid,
+                allowed,
+                indent=0,
+                seen=seen,
+            )
         print()  # spacer between lists
 
 
 def ical_unescape(text: str | None) -> str | None:
     if text is None:
         return None
-    return (text
-            .replace("\\\\", "\\")
-            .replace("\\n", "\n")
-            .replace("\\N", "\n")
-            .replace("\\,", ",")
-            .replace("\\;", ";"))
+    return (
+        text.replace("\\\\", "\\")
+        .replace("\\n", "\n")
+        .replace("\\N", "\n")
+        .replace("\\,", ",")
+        .replace("\\;", ";")
+    )
 
-def parse_due(due_value: str | None, due_params: dict | None, default_tz: str = "America/New_York"):
+
+def parse_due(
+    due_value: str | None, due_params: dict | None, default_tz: str = "America/New_York"
+):
     if not due_value:
         return None, False
 
     params = {k.upper(): v for k, v in (due_params or {}).items()}
     try:
         # Case 1: explicit VALUE=DATE or looks like YYYYMMDD
-        if params.get("VALUE", "").upper() == "DATE" or (len(due_value) == 8 and due_value.isdigit()):
-            y = int(due_value[0:4]); m = int(due_value[4:6]); d = int(due_value[6:8])
+        if params.get("VALUE", "").upper() == "DATE" or (
+            len(due_value) == 8 and due_value.isdigit()
+        ):
+            y = int(due_value[0:4])
+            m = int(due_value[4:6])
+            d = int(due_value[6:8])
             return date(y, m, d), True
 
         # Case 2: UTC date-time ending with Z
         if due_value.endswith("Z"):
-            dt = datetime.strptime(due_value, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+            dt = datetime.strptime(due_value, "%Y%m%dT%H%M%SZ").replace(
+                tzinfo=timezone.utc
+            )
             return dt, False
 
         # Case 3: TZID param
@@ -282,6 +330,7 @@ def parse_due(due_value: str | None, due_params: dict | None, default_tz: str = 
         # If parsing fails, just skip fancy formatting
         return None, False
 
+
 def humanize_due(parsed, is_date_only: bool, display_tz: str = "America/New_York"):
     if parsed is None:
         return None
@@ -290,7 +339,9 @@ def humanize_due(parsed, is_date_only: bool, display_tz: str = "America/New_York
 
     if is_date_only:
         # Show as local date; add relative days
-        due_dt = datetime(parsed.year, parsed.month, parsed.day, 0, 0, tzinfo=ZoneInfo(display_tz))
+        due_dt = datetime(
+            parsed.year, parsed.month, parsed.day, 0, 0, tzinfo=ZoneInfo(display_tz)
+        )
     else:
         # Convert to display tz
         due_dt = parsed.astimezone(ZoneInfo(display_tz))
@@ -312,16 +363,19 @@ def humanize_due(parsed, is_date_only: bool, display_tz: str = "America/New_York
 
     return f"{abs_str} ({'overdue' if sign=='-' else 'in'} {rel.lstrip('-')})"
 
+
 def clamp(text: str | None, limit: int) -> str | None:
     if text is None:
         return None
     if len(text) <= limit:
         return text
-    return text[:max(0, limit - 1)] + "…"
+    return text[: max(0, limit - 1)] + "…"
+
 
 def chunked(seq, size):
     for i in range(0, len(seq), size):
-        yield seq[i:i+size]
+        yield seq[i : i + size]
+
 
 # ================== Main ==================
 def main():
@@ -362,6 +416,7 @@ def main():
 
     except Exception as e:
         print("Error:", e)
+
 
 if __name__ == "__main__":
     main()
