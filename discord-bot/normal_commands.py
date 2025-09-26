@@ -11,8 +11,6 @@ from solardb import solardb
 
 
 class NonAdmin(Extension):
-    # print(SolarSheet.get_leaderboard());
-    # Check whos in shop currently
     @slash_command(name="peoplein", description="send an embed of who's in the shop")
     async def peoplein(self, ctx: SlashContext):
         names = solardb().people_in_names()

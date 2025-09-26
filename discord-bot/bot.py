@@ -23,7 +23,7 @@ bot_token = config["bot_token"]
 @listen()
 async def on_startup():
     await bot.change_presence(
-        status=Status.IDLE,
+        status=Status.ONLINE,
         activity=Activity(name="solar panels charge", type=ActivityType.WATCHING),
     )
     print(f"(SUCCESS) {bot.app.name} IS NOW RUNNING...")
