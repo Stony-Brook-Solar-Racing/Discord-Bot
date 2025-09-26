@@ -1,7 +1,7 @@
-config.json
-myenv/
-myvenv/
-venv/
-test.json
-__pycache__/
-
+/*.egg-info
+/build
+/venv
+/.venv
+/gspread_credentials.json
+__pycache__
+*.log
