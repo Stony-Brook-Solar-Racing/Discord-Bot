@@ -23,6 +23,18 @@ from solardb import solardb
 #
 
 
+def verify_access(ctx):
+    super_roles = [
+        764221236032307272,  # E-board
+        1151599685547610143,  # Bot tester
+        933061488648781895,  # Team lead
+    ]
+
+    return any(
+        ctx.guild.get_role(role_id) in ctx.author.roles for role_id in super_roles
+    )
+
+
 class SolarRacing(Extension):
     """
     Opens the shop with given parameters
