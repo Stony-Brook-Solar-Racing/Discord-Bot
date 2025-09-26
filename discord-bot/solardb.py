@@ -15,6 +15,11 @@ class solardb:
             f"dbname={config['dbname']} user={config['user']}"
         )
 
+    def next_session(self):
+        with self.connection.cursor() as cur:
+            cur.execute("SELECT nextval('session_seq')")
+            return cur.fetchone()[0]
+
     # return whether the person is in the shop
     def person_in(self, first_name, last_name) -> bool():
         first_name = first_name.lower()

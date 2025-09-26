@@ -1,4 +1,3 @@
-import DatabaseManager
 import embeds
 import helpers
 import interactions
@@ -73,9 +72,9 @@ class SolarRacing(Extension):
     )
     async def openshop(self, ctx: SlashContext, type="General", plan="N/A", time="N/A"):
         if not helpers.verify_access(ctx):
-            return  # Checks access
-        sessionNumber = DatabaseManager.incrementSessionNumber()
-        shop_embed = embeds.getShopHoursEmbed(type, plan, time, sessionNumber)
+            return
+        session_number = solardb().next_session()
+        shop_embed = embeds.getShopHoursEmbed(type, plan, time, session_number)
         await ctx.send(embed=shop_embed)
 
     """
