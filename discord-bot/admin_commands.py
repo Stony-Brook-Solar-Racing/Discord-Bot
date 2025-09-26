@@ -1,5 +1,4 @@
 import embeds
-import helpers
 import interactions
 from interactions import (
     Button,
@@ -19,7 +18,6 @@ from solardb import solardb
 # This file contains the following slash commands:
 # (ADMIN) sendrules - has the bot send out embeded list of rules
 # (ADMIN) botsay - has the bot say anything
-#
 
 
 def verify_access(ctx):
@@ -71,7 +69,7 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING,
     )
     async def openshop(self, ctx: SlashContext, type="General", plan="N/A", time="N/A"):
-        if not helpers.verify_access(ctx):
+        if not verify_access(ctx):
             return
         session_number = solardb().next_session()
         shop_embed = embeds.getShopHoursEmbed(type, plan, time, session_number)
@@ -83,7 +81,7 @@ class SolarRacing(Extension):
 
     @slash_command(name="closeshop", description="send an embed to shut it down")
     async def closeshop(self, ctx: SlashContext):
-        if not helpers.verify_access(ctx):
+        if not verify_access(ctx):
             return  # Checks access
         shop_embed = embeds.getShopHoursClosedEmbed()
         await ctx.send(embed=shop_embed)
@@ -104,7 +102,7 @@ class SolarRacing(Extension):
 
     @slash_command(name="sendrules", description="send a full list of rules")
     async def sendrules(self, ctx: SlashContext):
-        if not helpers.verify_access(ctx):
+        if not verify_access(ctx):
             return  # Checks access
 
         rules_array = embeds.getRulesEmbeds()
@@ -152,7 +150,7 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING,
     )
     async def bot_say(self, ctx: SlashContext, message: str = "GO SEAWOLVES!"):
-        if not helpers.verify_access(ctx):
+        if not verify_access(ctx):
             return  # Checks access
 
         await ctx.channel.send(message)
@@ -171,7 +169,7 @@ class SolarRacing(Extension):
         ],
     )
     async def send_tasks(self, ctx: SlashContext, account="software"):
-        if not helpers.verify_access(ctx):
+        if not verify_access(ctx):
             return  # Checks access
 
         import asyncio
@@ -264,7 +262,7 @@ class SolarRacing(Extension):
         opt_type=OptionType.STRING,
     )
     async def add_time(self, ctx: SlashContext, first_name, last_name, time):
-        if not helpers.verify_access(ctx):
+        if not verify_access(ctx):
             return  # Checks access
         result = solardb().add_time(first_name, last_name, float(time))
         if result == None:
