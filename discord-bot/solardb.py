@@ -103,7 +103,6 @@ class solardb:
             members = self.people_in()
             for person in members:
                 id_hash = person[0]
-                print(id_hash)
                 # Get time delta
                 cur.execute(
                     """
@@ -168,9 +167,3 @@ class solardb:
 
             self.connection.commit()
         return 1
-
-
-if __name__ == "__main__":
-    print("In solardb, TESTING")
-    db = solardb()
-    print(db.people_in())
