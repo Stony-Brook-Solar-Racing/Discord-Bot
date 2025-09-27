@@ -3,5 +3,6 @@
 /venv
 /.venv
 /gspread_credentials.json
+/config.json
 __pycache__
 *.log
