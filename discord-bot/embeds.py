@@ -170,21 +170,40 @@ def get_people_in_shop(names):
 
 # Embed for leaderboard
 def get_leaderboard(people):
-    names = ""
-    times = ""
-    count = 1
-    for person in people:
-        names += str(count) + " " + person[0] + " " + person[1] + "\n"
-        if person[2].total_seconds() / 3600 > 1:
-            hours = person[2].total_seconds() / 3600
-            mins = (person[2].total_seconds() / 60) % 60
-            times += str(int(hours)) + "h " + str(int(mins)) + "m\n"
+    lines = []
+    max_name_length = max(len(person[0] + " " + person[1]) for person in people)
+    for count, person in enumerate(people,1):
+        total_seconds = person[2].total_seconds()
+        if total_seconds / 3600 > 1:
+            hours = int(total_seconds // 3600)
+            mins = int((total_seconds // 60) % 60)
+            time_str = f"{hours}h {mins}m"
         else:
-            times += str(int(person[2].total_seconds() / 60)) + "m\n"
-        count += 1
+            time_str = f"{int(total_seconds // 60)}m"
+
+        name_str = f"{person[0]} {person[1]}"
+        lines.append(f"{count:<2} {name_str:<{max_name_length}} {time_str}")
+
     embed = Embed(title="Leaderboard")
-    embed.add_field("Name", names, True)
-    embed.add_field("Time(Mins)", times, True)
+
+    #Splits lines into chunks to not exceed 1024 char
+    current_chunk = []
+    chunk_length = 0
+    first = True
+    for line in lines:
+        if chunk_length + len(line) + 3 > 1024:  # +3 for newline
+            title = "Ranks "if first else " "
+            embed.add_field(title, "```\n" + "\n".join(current_chunk) + "\n```", inline=False)
+            current_chunk = []
+            chunk_length = 0
+            first = False
+        current_chunk.append(line)
+        chunk_length += len(line) + 1
+
+    if current_chunk:
+        title = "Ranks "if first else " "
+        embed.add_field(title, "```\n" + "\n".join(current_chunk) + "\n```", inline=False)
+
     embed.add_field("Sign out if you want time!!!", " ")
     return embed
 
