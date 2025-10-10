@@ -170,6 +170,10 @@ def get_people_in_shop(names):
 
 # Embed for leaderboard
 def get_leaderboard(people):
+    # Limit people to 65
+    if len(people) > 65:
+        extra_people = len(people)-65
+        people = people[:-extra_people]
     lines = []
     max_name_length = max(len(person[0] + " " + person[1]) for person in people)
     for count, person in enumerate(people,1):

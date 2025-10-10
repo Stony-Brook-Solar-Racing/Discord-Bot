@@ -276,6 +276,11 @@ class SolarRacing(Extension):
     )
     @admin_only()
     async def add_time(self, ctx: SlashContext, first_name, last_name, time):
+        try:
+            float(time)
+        except ValueError:
+            await ctx.send("Invalid number. Provide a number only")
+            return
         result = solardb().add_time(first_name, last_name, float(time))
         if result == None:
             await ctx.send(f"{first_name} {last_name} does not exist")
