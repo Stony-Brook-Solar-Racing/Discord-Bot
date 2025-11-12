@@ -4,6 +4,8 @@ from zoneinfo import ZoneInfo
 from interactions import Embed, EmbedField
 from pull_tasks import clamp, humanize_due, ical_unescape, parse_due
 
+LEADERBOARD_LIMIT = 25
+
 """
 
 the following code is an example of creating a paginator.
@@ -171,10 +173,10 @@ def get_people_in_shop(names):
 
 # Embed for leaderboard
 def get_leaderboard(people):
-    # Limit people to 65
-    if len(people) > 65:
-        extra_people = len(people)-65
-        people = people[:-extra_people]
+    # Limit people to LEADERBOARD_LIMIT
+    # Estimated limit to be 1024/37 = 28 => 25 for a round number
+    people = people[:LEADERBOARD_LIMIT]
+
     lines = []
     max_name_length = max(len(person[0] + " " + person[1]) for person in people)
     for count, person in enumerate(people,1):
