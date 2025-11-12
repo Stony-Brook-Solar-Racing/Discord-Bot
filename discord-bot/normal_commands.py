@@ -1,11 +1,8 @@
 import embeds
 from interactions import (
     Extension,
-    OptionType,
-    SlashCommandChoice,
     SlashContext,
     slash_command,
-    slash_option,
 )
 from solardb import solardb
 

@@ -5,10 +5,8 @@ from interactions import (
     ActivityType,
     Client,
     Intents,
-    SlashContext,
     Status,
     listen,
-    slash_command,
 )
 
 # Bot

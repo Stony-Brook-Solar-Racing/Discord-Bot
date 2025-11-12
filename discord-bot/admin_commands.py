@@ -8,11 +8,9 @@ from interactions import (
     ButtonStyle,
     Embed,
     Extension,
-    File,
     OptionType,
     SlashCommandChoice,
     SlashContext,
-    check,
     slash_command,
     slash_option,
 )
@@ -282,7 +280,7 @@ class SolarRacing(Extension):
             await ctx.send("Invalid number. Provide a number only")
             return
         result = solardb().add_time(first_name, last_name, float(time))
-        if result == None:
+        if result is None:
             await ctx.send(f"{first_name} {last_name} does not exist")
         else:
             await ctx.send(f"added {time} hours to {first_name} {last_name}")

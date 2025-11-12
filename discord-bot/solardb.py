@@ -34,7 +34,7 @@ class solardb:
                 (first_name, last_name),
             )
             data = cur.fetchone()
-            return None if data == None else data[0]
+            return None if data is None else data[0]
 
     def people_in(self) -> list[list[str]]:
         with self.connection.cursor() as cur:
@@ -153,7 +153,7 @@ class solardb:
             )
 
             row = cur.fetchone()
-            if row == None:
+            if row is None:
                 return None
             total_time = row[1] + timedelta(hours=hour)
             cur.execute(

@@ -2,6 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from interactions import Embed, EmbedField
+from pull_tasks import clamp, humanize_due, ical_unescape, parse_due
 
 """
 
@@ -50,7 +51,7 @@ def getShopHoursEmbed(type, plan, estimated_time, sessionNumber):
 def getShopHoursClosedEmbed():
     embed = Embed(
         color=0x00FFFF,
-        title=f"SHOP CLOSED",
+        title="SHOP CLOSED",
         fields=[
             EmbedField(name="goodbye. come back next time. we'll miss you.", value="👋")
         ],
@@ -224,7 +225,6 @@ def print_tasks(tasks):
 
 
 # =================== Nextcloud Tasks Embeds ===========================
-from pull_tasks import clamp, humanize_due, ical_unescape, parse_due
 
 EMBED_COLOR_BY_STATUS = {
     "NEEDS-ACTION": 0xF1C40F,  # yellow
