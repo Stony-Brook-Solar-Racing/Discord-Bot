@@ -21,3 +21,17 @@ class NonAdmin(Extension):
         people = solardb().get_leaderboard()
         shop_embed = embeds.get_leaderboard(people)
         await ctx.send(embed=shop_embed)
+
+    # @slash_command(name="todo add", description="add todos in markdown bullet format")
+    # async def add_todos(self, ctx: SlashContext):
+    #     # Take the user's next message, and add those as todos
+    #     generate_todos(ctx.content)
+    #     await ctx.send(embed=embed)
+    #
+    # @slash_command(name="todo check", description="add todos")
+    # async def check_todo(self, ctx: SlashContext):
+    #     await ctx.send(embed=embed)
+    #
+    # @slash_command(name="todo remove", description="remove all completed todos")
+    # async def remove_todos(self, ctx: SlashContext):
+    #     await ctx.send(embed=embed)
