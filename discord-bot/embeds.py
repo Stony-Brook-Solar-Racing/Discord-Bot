@@ -175,7 +175,7 @@ def get_people_in_shop(names):
 def get_leaderboard(people):
     # Limit people to LEADERBOARD_LIMIT
     # Estimated limit to be 1024/37 = 28 => 25 for a round number
-    people = people[:LEADERBOARD_LIMIT]
+    # people = people[:LEADERBOARD_LIMIT]
 
     lines = []
     max_name_length = max(len(person[0] + " " + person[1]) for person in people)
@@ -191,28 +191,25 @@ def get_leaderboard(people):
         name_str = f"{person[0]} {person[1]}"
         lines.append(f"{count:<2} {name_str:<{max_name_length}} {time_str}")
 
-    embed = Embed(title="Leaderboard")
 
     #Splits lines into chunks to not exceed 1024 char
     current_chunk = []
     chunk_length = 0
     first = True
+    embeds = []
     for line in lines:
-        if chunk_length + len(line) + 3 > 1024:  # +3 for newline
+        embed = Embed(title="Leaderboard")
+        if chunk_length > LEADERBOARD_LIMIT:
             title = "Ranks "if first else " "
             embed.add_field(title, "```\n" + "\n".join(current_chunk) + "\n```", inline=False)
+            embeds.append(embed)
+            first = False
             current_chunk = []
             chunk_length = 0
-            first = False
         current_chunk.append(line)
-        chunk_length += len(line) + 1
-
-    if current_chunk:
-        title = "Ranks "if first else " "
-        embed.add_field(title, "```\n" + "\n".join(current_chunk) + "\n```", inline=False)
-
-    embed.add_field("Sign out if you want time!!!", " ")
-    return embed
+        chunk_length += 1
+    embeds[-1].add_field("Sign out if you want time!!!", " ")
+    return embeds
 
 
 def print_tasks(tasks):

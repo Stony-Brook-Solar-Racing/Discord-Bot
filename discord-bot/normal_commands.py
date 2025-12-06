@@ -19,5 +19,6 @@ class NonAdmin(Extension):
     )
     async def leaderboard(self, ctx: SlashContext):
         people = solardb().get_leaderboard()
-        shop_embed = embeds.get_leaderboard(people)
-        await ctx.send(embed=shop_embed)
+        shop_embeds = embeds.get_leaderboard(people)
+        for embed in shop_embeds:
+            await ctx.send(embed=embed)
