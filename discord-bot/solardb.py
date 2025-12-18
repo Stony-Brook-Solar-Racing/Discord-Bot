@@ -89,7 +89,7 @@ class solardb:
             try:
                 cur.executemany(query, tasks)
                 self.connection.commit()
-            except Exception as e:
+            except Exception as _:
                 self.connection.rollback()
 
     def get_tasks(self):
