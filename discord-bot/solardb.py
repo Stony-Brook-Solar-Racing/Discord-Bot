@@ -6,8 +6,6 @@ import psycopg
 with open("config.json", "r") as conf:
     config = json.load(conf)
 
-DBNAME = "db"
-
 
 class solardb:
     def __init__(self):
@@ -84,6 +82,15 @@ class solardb:
                 )
             self.connection.commit()
         return True
+
+    def import_tasks(self, tasks):
+        query = "INSERT INTO tasks (category, task) VALUES (%s, %s);"
+        with self.connection.cursor() as cur:
+            try:
+                cur.executemany(query, tasks)
+                self.connection.commit()
+            except Exception as e:
+                self.connection.rollback()
 
     def get_leaderboard(self):
         with self.connection.cursor() as cur:

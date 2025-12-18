@@ -1,4 +1,5 @@
 import json
+import re
 
 from interactions import (
     Activity,
@@ -8,7 +9,10 @@ from interactions import (
     Status,
     listen,
 )
-from interactions import ContextMenuContext, Message, message_context_menu
+from interactions import ContextMenuContext, message_context_menu
+from markdown_to_data import Markdown
+
+from solardb import solardb
 
 # Bot
 bot = Client(intents=Intents.DEFAULT)
@@ -32,16 +36,31 @@ async def on_startup():
 bot.load_extension("admin_commands")
 bot.load_extension("normal_commands")
 
-@message_context_menu(name="Add todo")
-async def add_todo(ctx: ContextMenuContext):
+@message_context_menu(name="Add tasks")
+async def add_tasks(ctx: ContextMenuContext):
     admin_roles = config["admin_roles"]
     if not any(ctx.guild.get_role(role_id) in ctx.author.roles for role_id in admin_roles):
         await ctx.send("You do not have permission to use this command.", ephemeral=True)
         return
 
-    # placeholder
-    message: Message = ctx.target
-    await ctx.send(message.content)
+    message = ctx.target
+    clean_content = re.sub(r"^[ ]-", "-", message.content, flags=re.MULTILINE)
+
+    tasks = []
+    data = Markdown(clean_content).md_list
+    for element in data:
+        if "list" not in element:
+            continue
+        for item in element["list"]["items"]:
+            if not item["items"]: # not category, no sub-items
+                tasks.append(("", item["content"]))
+            else: # is category
+                category = item["content"]
+                for inner_item in item["items"]:
+                    tasks.append((category, inner_item["content"]))
+
+    solardb().import_tasks(tasks)
+    await ctx.send("Added tasks!", ephemeral=True)
 
 # Start up the bot
 bot.start(bot_token)
