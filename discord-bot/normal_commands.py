@@ -43,7 +43,7 @@ def create_leaderboard_embed(people, page=1, items_per_page=25):
     embed = Embed(title="Leaderboard")
     embed.add_field(
         name=f"Ranks (Page {page}/{total_pages})",
-        value=f"```\n{'\n'.join(lines)}\n```",
+        value="```\n" + "\n".join(lines) + "\n```",
     )
     embed.set_footer(text="Sign out if you want time!!!")
     return embed
