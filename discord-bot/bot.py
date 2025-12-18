@@ -15,7 +15,11 @@ from markdown_to_data import Markdown
 from solardb import solardb
 
 # Bot
-bot = Client(intents=Intents.DEFAULT)
+bot = Client(
+    intents=Intents.DEFAULT,
+    sync_interactions=True,
+    delete_unused_application_cmds=True,
+)
 
 # Fetch the bot token from the config.json
 with open("config.json") as file:

@@ -92,6 +92,25 @@ class solardb:
             except Exception as e:
                 self.connection.rollback()
 
+    def get_tasks(self):
+        query = "SELECT id, category, task, complete FROM tasks ORDER BY id ASC;"
+        with self.connection.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
+        return rows
+
+    def purge_tasks(self):
+        query = "DELETE FROM tasks WHERE complete = True;"
+        with self.connection.cursor() as cur:
+            cur.execute(query)
+            self.connection.commit()
+
+    def complete_task(self, id):
+        query = "UPDATE tasks SET complete = True WHERE id = %s;"
+        with self.connection.cursor() as cur:
+            cur.execute(query, (id,))
+            self.connection.commit()
+
     def get_leaderboard(self):
         with self.connection.cursor() as cur:
             cur.execute(
