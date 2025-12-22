@@ -57,7 +57,7 @@ async def add_tasks(ctx: ContextMenuContext):
             continue
         for item in element["list"]["items"]:
             if not item["items"]: # not category, no sub-items
-                tasks.append(("", item["content"]))
+                tasks.append(("Miscellaneous", item["content"]))
             else: # is category
                 category = item["content"]
                 for inner_item in item["items"]:

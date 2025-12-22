@@ -120,14 +120,18 @@ class NonAdmin(Extension):
     async def tasks_base(self, ctx=None):
         pass
 
-    @tasks_base.subcommand(sub_cmd_name="show", sub_cmd_description="View all tasks")
-    async def view_tasks(self, ctx: SlashContext):
-        tasks = solardb().get_tasks()
+    @tasks_base.subcommand(sub_cmd_name="show", sub_cmd_description="Show all tasks")
+    @slash_option(
+        name="filter",
+        description="The category you want to display tasks for, omission of this displays everything",
+        required=False,
+        opt_type=OptionType.STRING,
+    )
+    async def show_tasks(self, ctx: SlashContext, filter=None):
+        raw_tasks = solardb().get_tasks(filter)
         tasks_dict = {}
-        for task in tasks:
+        for task in raw_tasks:
             id, category, content, is_complete = task
-            if not category:
-                category = "Miscellaneous"
             if category not in tasks_dict:
                 tasks_dict[category] = []
             tasks_dict[category].append((id, content, is_complete))
@@ -138,7 +142,7 @@ class NonAdmin(Extension):
             for task in tasks:
                 id, content, is_complete = task
                 check_text = ":white_check_mark:" if is_complete else ":x:"
-                tasks_text += f"{id}. {check_text} {content}\n"
+                tasks_text += f"{id}\. {check_text} {content}\n"
             embed.add_field(name=category, value=tasks_text)
 
         await ctx.send(embed=embed)

@@ -92,10 +92,16 @@ class solardb:
             except Exception as _:
                 self.connection.rollback()
 
-    def get_tasks(self):
-        query = "SELECT id, category, task, complete FROM tasks ORDER BY id ASC;"
+    def get_tasks(self, filter=None):
+        if filter is None:
+            query = "SELECT id, category, task, complete FROM tasks ORDER BY id ASC;"
+            params = None
+        else:
+            query = "SELECT id, category, task, complete FROM tasks WHERE category ILIKE %s ORDER BY id ASC;"
+            params = (f"%{filter}%",)
+
         with self.connection.cursor() as cur:
-            cur.execute(query)
+            cur.execute(query, params)
             rows = cur.fetchall()
         return rows
 
