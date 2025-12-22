@@ -111,11 +111,20 @@ class solardb:
             cur.execute(query)
             self.connection.commit()
 
-    def complete_task(self, id):
-        query = "UPDATE tasks SET complete = True WHERE id = %s;"
+    def complete_tasks(self, id_list):
+        query = """
+            UPDATE tasks 
+            SET complete = True 
+            WHERE id = ANY(%s) 
+            RETURNING id, task;
+        """
+
         with self.connection.cursor() as cur:
-            cur.execute(query, (id,))
+            cur.execute(query, (id_list,))
+            updated_rows = cur.fetchall()
             self.connection.commit()
+
+        return updated_rows
 
     def get_leaderboard(self):
         with self.connection.cursor() as cur:

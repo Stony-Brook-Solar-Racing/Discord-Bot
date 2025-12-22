@@ -123,7 +123,7 @@ class NonAdmin(Extension):
     @tasks_base.subcommand(sub_cmd_name="show", sub_cmd_description="Show all tasks")
     @slash_option(
         name="filter",
-        description="The category you want to display tasks for, omission of this displays everything",
+        description="Category name",
         required=False,
         opt_type=OptionType.STRING,
     )
@@ -152,15 +152,38 @@ class NonAdmin(Extension):
     )
     async def purge_tasks(self, ctx: SlashContext):
         solardb().purge_tasks()
-        await ctx.send("Purged tasks.")
+        await ctx.send("Whoosh! :dash: All finished tasks have been removed")
 
-    @tasks_base.subcommand(sub_cmd_name="complete", sub_cmd_description="Complete task")
-    @slash_option(
-        name="id",
-        description="id of the task you want to complete",
-        required=True,
-        opt_type=OptionType.INTEGER,
+    @tasks_base.subcommand(
+        sub_cmd_name="complete", sub_cmd_description="Complete task(s)"
     )
-    async def complete_task(self, ctx: SlashContext, id):
-        solardb().complete_task(id)
-        await ctx.send(f"Completed task {id}!")
+    @slash_option(
+        name="ids",
+        description="Comma-separated list of IDs (e.g. 1,2,5)",
+        required=True,
+        opt_type=OptionType.STRING,
+    )
+    async def complete_task(self, ctx: SlashContext, ids: str):
+        if not re.match(r"^\d+(,\d+)*$", ids):
+            await ctx.send(
+                "Oops! I couldn't read those IDs. :face_with_spiral_eyes:\n"
+                "Please only use numbers separated by commas (like `1,2,5`) with no spaces!"
+            )
+            return
+
+        id_list = [int(x) for x in ids.split(",")]
+        completed_rows = solardb().complete_tasks(id_list)
+
+        if not completed_rows:
+            await ctx.send(
+                "No tasks found with those IDs (or they were already completed)."
+            )
+            return
+
+        response_text = "Yay! :tada: You completed:\n"
+        for row in completed_rows:
+            t_id = row[0]
+            t_content = row[1]
+            response_text += f"{t_id}\. {t_content}\n"
+
+        await ctx.send(response_text)
