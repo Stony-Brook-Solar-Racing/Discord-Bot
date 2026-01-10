@@ -1,17 +1,17 @@
 import re
+
 import interactions
 from interactions import (
     Extension,
     SlashContext,
     slash_command,
-    slash_option,
-    OptionType,
     Embed,
     Button,
     ButtonStyle,
     component_callback,
     spread_to_rows,
 )
+
 import embeds
 from solardb import solardb
 
@@ -115,75 +115,3 @@ class NonAdmin(Extension):
             embed=create_leaderboard_embed(people, page=new_page),
             components=spread_to_rows(*new_components),
         )
-
-    @slash_command(name="task", description="Manage tasks")
-    async def tasks_base(self, ctx=None):
-        pass
-
-    @tasks_base.subcommand(sub_cmd_name="show", sub_cmd_description="Show all tasks")
-    @slash_option(
-        name="filter",
-        description="Category name",
-        required=False,
-        opt_type=OptionType.STRING,
-    )
-    async def show_tasks(self, ctx: SlashContext, filter=None):
-        raw_tasks = solardb().get_tasks(filter)
-        tasks_dict = {}
-        for task in raw_tasks:
-            id, category, content, is_complete = task
-            if category not in tasks_dict:
-                tasks_dict[category] = []
-            tasks_dict[category].append((id, content, is_complete))
-
-        embed = Embed(title="Tasks")
-        for category, tasks in tasks_dict.items():
-            tasks_text = ""
-            for task in tasks:
-                id, content, is_complete = task
-                check_text = ":white_check_mark:" if is_complete else ":x:"
-                tasks_text += f"{id}\. {check_text} {content}\n"
-            embed.add_field(name=category, value=tasks_text)
-
-        await ctx.send(embed=embed)
-
-    @tasks_base.subcommand(
-        sub_cmd_name="purge", sub_cmd_description="Delete complete tasks"
-    )
-    async def purge_tasks(self, ctx: SlashContext):
-        solardb().purge_tasks()
-        await ctx.send("Whoosh! :dash: All finished tasks have been removed")
-
-    @tasks_base.subcommand(
-        sub_cmd_name="complete", sub_cmd_description="Complete task(s)"
-    )
-    @slash_option(
-        name="ids",
-        description="Comma-separated list of IDs (e.g. 1,2,5)",
-        required=True,
-        opt_type=OptionType.STRING,
-    )
-    async def complete_task(self, ctx: SlashContext, ids: str):
-        if not re.match(r"^\d+(,\d+)*$", ids):
-            await ctx.send(
-                "Oops! I couldn't read those IDs. :face_with_spiral_eyes:\n"
-                "Please only use numbers separated by commas (like `1,2,5`) with no spaces!"
-            )
-            return
-
-        id_list = [int(x) for x in ids.split(",")]
-        completed_rows = solardb().complete_tasks(id_list)
-
-        if not completed_rows:
-            await ctx.send(
-                "No tasks found with those IDs (or they were already completed)."
-            )
-            return
-
-        response_text = "Yay! :tada: You completed:\n"
-        for row in completed_rows:
-            t_id = row[0]
-            t_content = row[1]
-            response_text += f"{t_id}\. {t_content}\n"
-
-        await ctx.send(response_text)
